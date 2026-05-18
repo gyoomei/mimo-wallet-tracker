@@ -74,7 +74,6 @@
     .add-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
     .add-form input::placeholder{color:var(--dim);font-family:'Inter',sans-serif}
 
-    /* Wallet Card */
     .wallet-card{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
     .wallet-card:hover{border-color:var(--border-hover);transform:translateY(-1px)}
     .wallet-card.active{border-color:var(--accent);box-shadow:var(--glow-accent)}
@@ -91,22 +90,20 @@
     .chain-bars{display:flex;gap:3px;height:6px;border-radius:3px;overflow:hidden;margin-top:8px}
     .chain-bar{height:100%;min-width:3px;border-radius:2px;transition:width 0.3s}
 
-    /* Chain Grid inside wallet */
-    .chain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
-    .chain-tile{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:var(--radius-xs);padding:10px;transition:all 0.2s}
+    .chain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-top:10px}
+    .chain-tile{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:var(--radius-xs);padding:8px 10px;transition:all 0.2s;cursor:pointer}
     .chain-tile:hover{border-color:var(--border-hover)}
-    .chain-tile-header{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-    .chain-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-    .chain-name{font-size:11px;font-weight:600}
-    .chain-bal{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
-    .chain-usd{font-size:10px;color:var(--dim)}
+    .chain-tile.has-bal{border-color:rgba(34,197,94,0.15);background:rgba(34,197,94,0.03)}
+    .chain-tile-header{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+    .chain-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .chain-name{font-size:10px;font-weight:600}
+    .chain-bal{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+    .chain-usd{font-size:9px;color:var(--dim)}
 
-    /* Tabs */
     .tabs{display:flex;gap:2px;margin-bottom:14px;background:rgba(0,0,0,0.2);border-radius:var(--radius-sm);padding:3px}
     .tab{flex:1;padding:7px 12px;border-radius:var(--radius-xs);font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--dim);transition:all 0.2s;font-family:inherit;text-align:center}
     .tab:hover{color:var(--text)}.tab.active{background:rgba(99,102,241,0.15);color:var(--accent)}
 
-    /* Transactions */
     .tx-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;transition:all 0.2s;gap:8px}
     .tx-item:last-child{border-bottom:none}.tx-item:hover{padding-left:4px}
     .tx-left{display:flex;align-items:center;gap:8px;min-width:0}
@@ -119,7 +116,6 @@
     .tx-value{font-weight:700;font-variant-numeric:tabular-nums;font-size:12px}
     .tx-time{color:var(--dim);font-size:10px;margin-top:2px}
 
-    /* Tokens */
     .token-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}.token-item:last-child{border-bottom:none}
     .token-info{display:flex;align-items:center;gap:8px}
     .token-icon{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent);overflow:hidden}
@@ -128,7 +124,6 @@
     .token-balance{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
     .token-usd{font-size:10px;color:var(--dim);text-align:right}
 
-    /* Analysis */
     .analysis-block{margin-bottom:14px}.analysis-block:last-child{margin-bottom:0}
     .analysis-label{font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:8px}
     .analysis-summary{font-size:12px;line-height:1.6;color:var(--dim);margin-bottom:12px}
@@ -136,7 +131,6 @@
     .analysis-list li{font-size:12px;color:var(--text2);padding:5px 0;padding-left:16px;position:relative;border-bottom:1px solid var(--border);line-height:1.5}
     .analysis-list li:last-child{border-bottom:none}.analysis-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:600}
 
-    /* Risk Badge */
     .risk{padding:3px 8px;border-radius:var(--radius-xs);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
     .risk::before{content:'';width:5px;height:5px;border-radius:50%}
     .risk-LOW{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.15)}.risk-LOW::before{background:var(--green)}
@@ -145,7 +139,6 @@
     .risk-CRITICAL{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.15)}.risk-CRITICAL::before{background:var(--red);animation:pulse 1.5s infinite}
     .risk-UNKNOWN{background:rgba(107,114,128,0.1);color:var(--dim);border:1px solid rgba(107,114,128,0.15)}.risk-UNKNOWN::before{background:var(--dim)}
 
-    /* Alerts */
     .alert-item{padding:10px 0;border-bottom:1px solid var(--border);transition:all 0.2s}.alert-item:last-child{border-bottom:none}.alert-item:hover{padding-left:4px}
     .alert-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
     .alert-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -165,6 +158,8 @@
     .toast.success{border-color:rgba(34,197,94,0.3)}.toast.error{border-color:rgba(239,68,68,0.3)}
     .progress{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px}
     .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.3s;width:0%}
+    .scan-status{font-size:10px;color:var(--dim);margin-top:6px;display:flex;align-items:center;gap:6px}
+    .scan-status .spinner{width:10px;height:10px}
 
     @media(max-width:1024px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:640px){
@@ -185,7 +180,7 @@
     </div>
     <div class="header-right">
       <span style="font-size:11px;color:var(--green);font-weight:600" id="eth-price">ETH: ...</span>
-      <div class="badge">18 Chains</div>
+      <div class="badge">15 Chains</div>
       <div class="badge live">Live</div>
       <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="gh-link">⭐ <span>GitHub</span></a>
     </div>
@@ -195,7 +190,7 @@
     <div class="hero">
       <div class="tag">🛡️ Multi-Chain Wallet Intelligence</div>
       <h1>Unified Wallet<br>Monitoring</h1>
-      <p>Track any EVM wallet across 18 chains in one view. Real balances, real tokens, real value — no API key needed.</p>
+      <p>Track any EVM wallet across 15 chains in one view. Real balances, real tokens, real value — no API key needed.</p>
       <div class="actions">
         <button class="btn" onclick="document.getElementById('wallets-section').scrollIntoView({behavior:'smooth'})">🚀 Start Tracking</button>
         <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="btn btn-ghost">⭐ Star on GitHub</a>
@@ -212,7 +207,7 @@
       <div class="stat-card">
         <div class="stat-icon" style="background:rgba(168,85,247,0.1)">⛓️</div>
         <div class="stat-label">Chains</div>
-        <div class="stat-value" id="stat-chains">18</div>
+        <div class="stat-value" id="stat-chains">15</div>
         <div class="stat-sub">EVM networks</div>
       </div>
       <div class="stat-card">
@@ -249,7 +244,7 @@
           </div>
         </div>
 
-        <!-- Detail Panel (transactions/tokens/analysis) -->
+        <!-- Detail Panel -->
         <div class="section" style="margin-top:14px;" id="detail-section">
           <div class="section-head">
             <h2><span class="dot"></span> <span id="detail-title">Select a wallet</span></h2>
@@ -294,25 +289,21 @@
     // ══════════════════════════════════════════════
     // STATE
     // ══════════════════════════════════════════════
-    let wallets = []; // [{id, address, label, chains:{eth:{balance,usd}, bsc:{balance,usd},...}, totalUsd, tokens:[], txs:[], risk}]
+    let wallets = [];
     let allAlerts = [];
-    let activeWallet = null; // wallet id
+    let activeWallet = null;
     let activeTab = 'txs';
-    let scanProgress = {}; // {walletId: {scanned: N, total: 18}}
 
     // ══════════════════════════════════════════════
-    // CHAINS (Blockscout V2 — free, no API key)
+    // CHAINS — Only verified Blockscout V2 instances with CORS *
     // ══════════════════════════════════════════════
     const CHAINS = {
       eth:        { name:'Ethereum',   base:'https://eth.blockscout.com',           symbol:'ETH',   explorer:'https://etherscan.io',             color:'#627eea' },
       base:       { name:'Base',       base:'https://base.blockscout.com',          symbol:'ETH',   explorer:'https://basescan.org',             color:'#0052ff' },
       arbitrum:   { name:'Arbitrum',   base:'https://arbitrum.blockscout.com',      symbol:'ETH',   explorer:'https://arbiscan.io',              color:'#28a0f0' },
-      optimism:   { name:'Optimism',   base:'https://optimism.blockscout.com',      symbol:'ETH',   explorer:'https://optimistic.etherscan.io',  color:'#ff0420' },
       polygon:    { name:'Polygon',    base:'https://polygon.blockscout.com',       symbol:'POL',   explorer:'https://polygonscan.com',          color:'#8247e5' },
-      bsc:        { name:'BSC',        base:'https://bsc.blockscout.com',           symbol:'BNB',   explorer:'https://bscscan.com',              color:'#f0b90b' },
       zksync:     { name:'zkSync',     base:'https://zksync.blockscout.com',        symbol:'ETH',   explorer:'https://explorer.zksync.io',       color:'#4e529a' },
       scroll:     { name:'Scroll',     base:'https://scrollscan.com',               symbol:'ETH',   explorer:'https://scrollscan.com',           color:'#ffdbb0' },
-      gnosis:     { name:'Gnosis',     base:'https://gnosis.blockscout.com',        symbol:'xDAI',  explorer:'https://gnosisscan.io',            color:'#04795b' },
       celo:       { name:'Celo',       base:'https://celo.blockscout.com',          symbol:'CELO',  explorer:'https://celoscan.io',              color:'#fcff52' },
       arbitrum_nova:{name:'Arb Nova',  base:'https://arbitrum-nova.blockscout.com', symbol:'ETH',   explorer:'https://nova.arbiscan.io',         color:'#28a0f0' },
       filecoin:   { name:'Filecoin',   base:'https://filecoin.blockscout.com',      symbol:'FIL',   explorer:'https://filfox.info',              color:'#0090ff' },
@@ -329,12 +320,19 @@
     // API
     // ══════════════════════════════════════════════
     async function blockscoutGet(chain, path) {
-      const base = CHAINS[chain].base;
+      const base = CHAINS[chain]?.base;
+      if (!base) return null;
       try {
-        const res = await fetch(`${base}/api/v2${path}`);
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 8000);
+        const res = await fetch(`${base}/api/v2${path}`, { signal: controller.signal });
+        clearTimeout(timer);
         if (!res.ok) return null;
         return await res.json();
-      } catch { return null; }
+      } catch(e) {
+        console.warn(`[API] ${chain}${path} failed:`, e.message);
+        return null;
+      }
     }
 
     async function fetchChainData(address, chain) {
@@ -342,7 +340,14 @@
       if (!data) return null;
       const bal = data.coin_balance ? parseInt(data.coin_balance) / 1e18 : 0;
       const rate = parseFloat(data.exchange_rate || '0');
-      return { balance: bal, usd: bal * rate, rate, has_activity: data.has_logs || data.has_token_transfers || data.has_tokens || bal > 0 };
+      return {
+        balance: bal,
+        usd: bal * rate,
+        rate,
+        hasLogs: !!data.has_logs,
+        hasTokens: !!data.has_tokens,
+        hasTokenTransfers: !!data.has_token_transfers
+      };
     }
 
     async function fetchChainTxs(address, chain) {
@@ -383,48 +388,77 @@
 
     async function fetchEthPrice() {
       try {
-        const res = await fetch('https://eth.blockscout.com/api/v2/stats');
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 6000);
+        const res = await fetch('https://eth.blockscout.com/api/v2/stats', { signal: controller.signal });
+        clearTimeout(timer);
         const data = await res.json();
-        document.getElementById('eth-price').textContent = `ETH: $${parseFloat(data.coin_price || 0).toFixed(2)}`;
-      } catch {}
+        const price = parseFloat(data.coin_price || '0');
+        if (price > 0) document.getElementById('eth-price').textContent = `ETH: $${price.toFixed(2)}`;
+      } catch(e) { console.warn('[Price] fetch failed:', e.message); }
     }
 
     // ══════════════════════════════════════════════
     // SCAN ALL CHAINS FOR A WALLET
     // ══════════════════════════════════════════════
     async function scanWallet(w) {
-      scanProgress[w.id] = { scanned: 0, total: CHAIN_KEYS.length };
-      updateScanUI(w.id);
+      console.log(`[Scan] Starting ${w.label} (${w.address.slice(0,10)}...) on ${CHAIN_KEYS.length} chains`);
+      let scanned = 0;
+      const total = CHAIN_KEYS.length;
 
-      // Scan all chains in parallel (batch 6 at a time to avoid overwhelming)
-      const batchSize = 6;
+      // Update UI to show scanning
+      renderWallets();
+
+      // Scan all chains in parallel batches of 5
+      const batchSize = 5;
       for (let i = 0; i < CHAIN_KEYS.length; i += batchSize) {
         const batch = CHAIN_KEYS.slice(i, i + batchSize);
-        await Promise.all(batch.map(async (chain) => {
-          try {
-            const data = await fetchChainData(w.address, chain);
-            if (data && data.has_activity) {
-              w.chains[chain] = { balance: data.balance, usd: data.usd, rate: data.rate };
-            }
-          } catch {}
-          scanProgress[w.id].scanned++;
-          updateScanUI(w.id);
+        const results = await Promise.allSettled(batch.map(async (chain) => {
+          const data = await fetchChainData(w.address, chain);
+          return { chain, data };
         }));
+
+        for (const r of results) {
+          scanned++;
+          if (r.status === 'fulfilled' && r.value.data) {
+            const { chain, data } = r.value;
+            // Always store chain data if we got a response
+            const totalBal = data.usd;
+            w.chains[chain] = {
+              balance: data.balance,
+              usd: data.usd,
+              rate: data.rate,
+              active: data.hasLogs || data.hasTokens || data.hasTokenTransfers || data.balance > 0
+            };
+            console.log(`[Scan] ${w.label} → ${chain}: ${data.balance.toFixed(6)} ${CHAINS[chain].symbol} ($${data.usd.toFixed(2)})`);
+          }
+        }
+
+        // Update progress UI
+        updateScanStatus(w.id, scanned, total);
       }
 
       // Calculate total
-      w.totalUsd = Object.values(w.chains).reduce((s, c) => s + c.usd, 0);
+      w.totalUsd = 0;
+      for (const c of Object.values(w.chains)) {
+        if (typeof c.usd === 'number' && !isNaN(c.usd)) w.totalUsd += c.usd;
+      }
       w.lastScan = new Date().toISOString();
-      delete scanProgress[w.id];
+
+      const activeCount = Object.values(w.chains).filter(c => c.active).length;
+      console.log(`[Scan] Done ${w.label}: ${activeCount} active chains, $${w.totalUsd.toFixed(2)} total`);
+
+      w._scanning = false;
       saveWallets();
       renderWallets();
+      if (activeWallet === w.id) showWallet(w.id);
     }
 
-    function updateScanUI(wid) {
-      const p = scanProgress[wid];
-      if (!p) return;
-      const el = document.getElementById(`scan-${wid}`);
-      if (el) el.style.width = `${(p.scanned / p.total * 100).toFixed(0)}%`;
+    function updateScanStatus(wid, scanned, total) {
+      const el = document.getElementById(`scan-status-${wid}`);
+      if (el) el.textContent = `Scanning ${scanned}/${total} chains...`;
+      const bar = document.getElementById(`scan-bar-${wid}`);
+      if (bar) bar.style.width = `${(scanned / total * 100).toFixed(0)}%`;
     }
 
     // ══════════════════════════════════════════════
@@ -445,15 +479,16 @@
         tokens: [],
         txs: [],
         risk: 'UNKNOWN',
-        lastScan: null
+        lastScan: null,
+        _scanning: true
       };
       wallets.push(w);
       document.getElementById('input-address').value = '';
       document.getElementById('input-label').value = '';
-      renderWallets();
-      toast('Scanning 18 chains...', 'success');
+      toast('Scanning 15 chains...', 'success');
       await scanWallet(w);
-      toast(`Found on ${Object.keys(w.chains).length} chains · $${w.totalUsd.toFixed(2)} total`, 'success');
+      const activeCount = Object.values(w.chains).filter(c => c.active).length;
+      toast(`Found on ${activeCount} chains · $${w.totalUsd.toFixed(2)} total`, 'success');
     }
 
     function removeWallet(id) {
@@ -468,8 +503,8 @@
       if (!w) return;
       toast(`Refreshing ${w.label}...`, 'success');
       w.chains = {};
+      w._scanning = true;
       await scanWallet(w);
-      if (activeWallet === id) showWallet(id);
       toast(`Updated: $${w.totalUsd.toFixed(2)}`, 'success');
     }
 
@@ -477,9 +512,9 @@
       toast('Refreshing all wallets...', 'success');
       for (const w of wallets) {
         w.chains = {};
+        w._scanning = true;
         await scanWallet(w);
       }
-      if (activeWallet) showWallet(activeWallet);
       toast('All wallets updated', 'success');
     }
 
@@ -499,40 +534,46 @@
       const w = wallets.find(x => x.id === id);
       if (!w) return;
       document.getElementById('detail-title').textContent = w.label;
-      document.getElementById('detail-content').innerHTML = '<div class="loading"><div class="spinner"></div> Loading transactions...</div>';
 
-      // Fetch txs from all chains that have balance
-      const activeChains = Object.keys(w.chains);
-      let allTxs = [];
-      await Promise.all(activeChains.map(async (chain) => {
-        const txs = await fetchChainTxs(w.address, chain);
+      const activeChains = Object.keys(w.chains).filter(k => w.chains[k].active);
+      if (!activeChains.length) {
+        document.getElementById('detail-content').innerHTML = '<div class="loading"><div class="spinner"></div> Scanning chains...</div>';
+        // Wait for scan to finish
+        if (w._scanning) return;
+        document.getElementById('detail-content').innerHTML = '<div class="empty"><div class="icon">🔍</div><p>No chain activity found for this address</p></div>';
+        return;
+      }
+
+      document.getElementById('detail-content').innerHTML = `<div class="loading"><div class="spinner"></div> Loading data from ${activeChains.length} chains...</div>`;
+
+      // Fetch txs and tokens from active chains in parallel
+      let allTxs = [], allTokens = [];
+      await Promise.allSettled(activeChains.map(async (chain) => {
+        const [txs, tokens] = await Promise.all([
+          fetchChainTxs(w.address, chain),
+          fetchChainTokens(w.address, chain)
+        ]);
         allTxs.push(...txs);
-      }));
-      allTxs.sort((a, b) => b.timeStamp - a.timeStamp);
-      w.txs = allTxs;
-
-      // Fetch tokens from all chains
-      let allTokens = [];
-      await Promise.all(activeChains.map(async (chain) => {
-        const tokens = await fetchChainTokens(w.address, chain);
         allTokens.push(...tokens);
       }));
+
+      allTxs.sort((a, b) => b.timeStamp - a.timeStamp);
+      w.txs = allTxs;
       w.tokens = allTokens;
 
       // Detect alerts
       const alerts = [];
       for (const tx of allTxs.slice(0, 20)) {
         if (tx.value > 1.0 && tx.direction === 'out')
-          alerts.push({ severity:'warning', type:'large_transfer', message:`${w.label}: Sent ${tx.value.toFixed(4)} ${CHAINS[tx.chain].symbol} on ${CHAINS[tx.chain].name}`, time: tx.timeStamp });
+          alerts.push({ severity:'warning', type:'large_transfer', message:`${w.label}: Sent ${tx.value.toFixed(4)} ${CHAINS[tx.chain]?.symbol} on ${CHAINS[tx.chain]?.name}`, time: tx.timeStamp });
         if (tx.status === 'failed')
-          alerts.push({ severity:'info', type:'failed_tx', message:`${w.label}: Failed ${tx.method} on ${CHAINS[tx.chain].name}`, time: tx.timeStamp });
+          alerts.push({ severity:'info', type:'failed_tx', message:`${w.label}: Failed ${tx.method} on ${CHAINS[tx.chain]?.name}`, time: tx.timeStamp });
         if (tx.method === 'approve')
-          alerts.push({ severity:'warning', type:'approval', message:`${w.label}: Token approval on ${CHAINS[tx.chain].name}`, time: tx.timeStamp });
+          alerts.push({ severity:'warning', type:'approval', message:`${w.label}: Token approval on ${CHAINS[tx.chain]?.name}`, time: tx.timeStamp });
       }
       allAlerts = [...alerts, ...allAlerts].slice(0, 100);
       renderAlerts();
 
-      // Analysis
       w.risk = computeRisk(allTxs);
       saveWallets();
       renderWallets();
@@ -553,8 +594,7 @@
       const failed = txs.filter(t => t.status === 'failed').length;
       const approvals = txs.filter(t => t.method === 'approve').length;
       let risk = 0;
-      if (failed > 3) risk += 2;
-      else if (failed > 0) risk += 1;
+      if (failed > 3) risk += 2; else if (failed > 0) risk += 1;
       if (approvals > 2) risk += 1;
       if (txs.filter(t => t.value > 1 && t.direction === 'out').length > 5) risk += 1;
       return risk >= 4 ? 'CRITICAL' : risk >= 2 ? 'HIGH' : risk >= 1 ? 'MEDIUM' : 'LOW';
@@ -598,35 +638,44 @@
         return;
       }
 
-      const grandTotal = wallets.reduce((s, w) => s + w.totalUsd, 0);
+      const grandTotal = wallets.reduce((s, w) => s + (w.totalUsd || 0), 0);
       document.getElementById('stat-wallets').textContent = wallets.length;
       document.getElementById('stat-total').textContent = `$${grandTotal.toFixed(2)}`;
 
       el.innerHTML = wallets.map(w => {
-        const activeChains = Object.entries(w.chains).filter(([_, v]) => v.balance > 0 || v.usd > 0);
-        const chainBarHtml = activeChains.length > 0 ? `
+        const chainEntries = Object.entries(w.chains);
+        const activeChains = chainEntries.filter(([_, v]) => v.active);
+        const hasBalance = chainEntries.filter(([_, v]) => v.usd > 0.001);
+
+        // Chain proportion bar (only chains with balance)
+        const chainBarHtml = hasBalance.length > 0 ? `
           <div class="chain-bars">
-            ${activeChains.map(([chain, data]) => {
-              const pct = w.totalUsd > 0 ? Math.max(3, (data.usd / w.totalUsd * 100)) : 100 / activeChains.length;
+            ${hasBalance.map(([chain, data]) => {
+              const pct = w.totalUsd > 0 ? Math.max(3, (data.usd / w.totalUsd * 100)) : 100 / hasBalance.length;
               return `<div class="chain-bar" style="width:${pct}%;background:${CHAINS[chain]?.color || '#6366f1'}" title="${CHAINS[chain]?.name}: $${data.usd.toFixed(2)}"></div>`;
             }).join('')}
           </div>` : '';
-        
-        const chainGridHtml = Object.keys(w.chains).length > 0 ? `
+
+        // Chain grid — show all scanned chains, highlight ones with balance
+        const chainGridHtml = chainEntries.length > 0 ? `
           <div class="chain-grid">
-            ${Object.entries(w.chains).map(([chain, data]) => `
-              <div class="chain-tile" onclick="event.stopPropagation();window.open('${CHAINS[chain]?.explorer}/address/${w.address}','_blank')">
+            ${chainEntries
+              .sort((a, b) => b[1].usd - a[1].usd)
+              .map(([chain, data]) => `
+              <div class="chain-tile ${data.usd > 0.001 ? 'has-bal' : ''}" onclick="event.stopPropagation();window.open('${CHAINS[chain]?.explorer}/address/${w.address}','_blank')">
                 <div class="chain-tile-header">
                   <div class="chain-dot" style="background:${CHAINS[chain]?.color || '#6366f1'}"></div>
                   <span class="chain-name">${CHAINS[chain]?.name || chain}</span>
                 </div>
-                <div class="chain-bal">${data.balance > 0 ? data.balance.toFixed(4) : '0'} ${CHAINS[chain]?.symbol}</div>
-                <div class="chain-usd">${data.usd > 0 ? '$' + data.usd.toFixed(2) : '—'}</div>
+                <div class="chain-bal">${data.balance > 0 ? formatBal(data.balance) : '0'} ${CHAINS[chain]?.symbol}</div>
+                <div class="chain-usd">${data.usd > 0.001 ? '$' + data.usd.toFixed(2) : '—'}</div>
               </div>
             `).join('')}
           </div>` : '';
 
-        const scanning = scanProgress[w.id];
+        const scanning = w._scanning;
+        const activeCount = activeChains.length;
+        const scannedCount = chainEntries.length;
 
         return `
           <div class="wallet-card ${activeWallet === w.id ? 'active' : ''}" onclick="showWallet('${w.id}')">
@@ -641,12 +690,15 @@
                 </div>
               </div>
               <div style="text-align:right">
-                <div class="wallet-total">$${w.totalUsd.toFixed(2)}</div>
-                <div class="wallet-total-usd">${Object.keys(w.chains).length} chains active</div>
+                <div class="wallet-total">${w.totalUsd > 0 ? '$' + w.totalUsd.toFixed(2) : '$0.00'}</div>
+                <div class="wallet-total-usd">${scannedCount > 0 ? `${scannedCount} chains scanned · ${activeCount} active` : 'Not scanned yet'}</div>
                 <span class="risk risk-${w.risk}">${w.risk}</span>
               </div>
             </div>
-            ${scanning ? `<div class="progress"><div class="progress-bar" id="scan-${w.id}"></div></div>` : ''}
+            ${scanning ? `
+              <div class="progress"><div class="progress-bar" id="scan-bar-${w.id}"></div></div>
+              <div class="scan-status"><div class="spinner"></div> <span id="scan-status-${w.id}">Starting scan...</span></div>
+            ` : ''}
             ${chainBarHtml}
             ${chainGridHtml}
             <div class="wallet-actions">
@@ -656,6 +708,13 @@
             </div>
           </div>`;
       }).join('');
+    }
+
+    function formatBal(bal) {
+      if (bal >= 1000) return bal.toFixed(2);
+      if (bal >= 1) return bal.toFixed(4);
+      if (bal >= 0.0001) return bal.toFixed(6);
+      return bal.toFixed(8);
     }
 
     function renderDetail() {
@@ -670,15 +729,15 @@
       const el = document.getElementById('detail-content');
 
       if (activeTab === 'txs') {
-        if (!w.txs.length) {
-          el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>No transactions found across chains</p></div>';
+        if (!w.txs || !w.txs.length) {
+          el.innerHTML = `<div class="empty"><div class="icon">📋</div><p>${w._scanning ? 'Scanning in progress...' : 'No transactions found'}</p></div>`;
           return;
         }
         el.innerHTML = w.txs.slice(0, 50).map(tx => `
           <div class="tx-item">
             <div class="tx-left">
-              <span class="tx-chain-badge" style="background:${CHAINS[tx.chain]?.color}22;color:${CHAINS[tx.chain]?.color}">${CHAINS[tx.chain]?.name?.slice(0,4) || tx.chain}</span>
-              <span class="tx-method">${tx.method}</span>
+              <span class="tx-chain-badge" style="background:${CHAINS[tx.chain]?.color || '#666'}22;color:${CHAINS[tx.chain]?.color || '#666'}">${CHAINS[tx.chain]?.name?.slice(0,4) || tx.chain}</span>
+              <span class="tx-method">${esc(tx.method)}</span>
               <span class="tx-hash" onclick="window.open('${CHAINS[tx.chain]?.explorer}/tx/${tx.hash}','_blank')">${tx.hash.slice(0,10)}...</span>
               <span class="tx-status ${tx.status}"></span>
             </div>
@@ -693,11 +752,10 @@
       }
 
       else if (activeTab === 'tokens') {
-        if (!w.tokens.length) {
-          el.innerHTML = '<div class="empty"><div class="icon">💰</div><p>No ERC-20 tokens found across chains</p></div>';
+        if (!w.tokens || !w.tokens.length) {
+          el.innerHTML = `<div class="empty"><div class="icon">💰</div><p>${w._scanning ? 'Scanning in progress...' : 'No ERC-20 tokens found'}</p></div>`;
           return;
         }
-        // Group by chain
         const grouped = {};
         for (const t of w.tokens) {
           if (!grouped[t.chain]) grouped[t.chain] = [];
@@ -712,7 +770,7 @@
             ${tokens.map(t => `
               <div class="token-item">
                 <div class="token-info">
-                  <div class="token-icon">${t.iconUrl ? `<img src="${t.iconUrl}" onerror="this.parentElement.textContent='${t.symbol.slice(0,2)}'">` : t.symbol.slice(0,2)}</div>
+                  <div class="token-icon">${t.iconUrl ? `<img src="${esc(t.iconUrl)}" onerror="this.parentElement.textContent='${esc(t.symbol.slice(0,2))}'">` : esc(t.symbol.slice(0,2))}</div>
                   <div>
                     <div class="token-name">${esc(t.name)}</div>
                     <div class="token-symbol">${esc(t.symbol)} · ${t.type}</div>
@@ -730,7 +788,7 @@
       else if (activeTab === 'analysis') {
         const a = buildAnalysis(w);
         if (!a) {
-          el.innerHTML = '<div class="empty"><div class="icon">🧠</div><p>No transactions to analyze</p></div>';
+          el.innerHTML = `<div class="empty"><div class="icon">🧠</div><p>${w._scanning ? 'Scanning in progress...' : 'No transactions to analyze'}</p></div>`;
           return;
         }
         el.innerHTML = `
@@ -763,7 +821,7 @@
           <div class="analysis-block">
             <div class="analysis-label">Chain Breakdown</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px">
-              ${a.chainsUsed.map(c => `<span style="background:${CHAINS[c]?.color}22;color:${CHAINS[c]?.color};padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600">${CHAINS[c]?.name || c}</span>`).join('')}
+              ${a.chainsUsed.map(c => `<span style="background:${CHAINS[c]?.color || '#666'}22;color:${CHAINS[c]?.color || '#666'};padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600">${CHAINS[c]?.name || c}</span>`).join('')}
             </div>
           </div>
         `;
@@ -795,18 +853,27 @@
     // PERSISTENCE
     // ══════════════════════════════════════════════
     function saveWallets() {
-      const data = wallets.map(w => ({
-        id: w.id, address: w.address, label: w.label,
-        chains: w.chains, totalUsd: w.totalUsd, risk: w.risk, lastScan: w.lastScan
-      }));
-      localStorage.setItem('mimo_wallets_v2', JSON.stringify(data));
+      try {
+        const data = wallets.map(w => ({
+          id: w.id, address: w.address, label: w.label,
+          chains: w.chains, totalUsd: w.totalUsd, risk: w.risk, lastScan: w.lastScan
+        }));
+        localStorage.setItem('mimo_wallets_v3', JSON.stringify(data));
+      } catch(e) { console.warn('[Save] failed:', e.message); }
     }
 
     function loadWallets() {
       try {
-        const data = JSON.parse(localStorage.getItem('mimo_wallets_v2') || '[]');
-        wallets = data.map(w => ({ ...w, tokens: [], txs: [] }));
-      } catch { wallets = []; }
+        // Try v3 first, then v2, then v1
+        let raw = localStorage.getItem('mimo_wallets_v3');
+        if (!raw) raw = localStorage.getItem('mimo_wallets_v2');
+        if (!raw) raw = localStorage.getItem('mimo_wallets');
+        const data = JSON.parse(raw || '[]');
+        wallets = data.map(w => ({ ...w, tokens: [], txs: [], _scanning: false }));
+      } catch(e) {
+        console.warn('[Load] failed:', e.message);
+        wallets = [];
+      }
     }
 
     // ══════════════════════════════════════════════
@@ -828,36 +895,47 @@
     // INIT
     // ══════════════════════════════════════════════
     async function init() {
+      console.log('[Init] MiMo Wallet Tracker starting...');
       fetchEthPrice();
       loadWallets();
 
       // Demo wallets if empty
       if (!wallets.length) {
         wallets = [
-          { id:'demo1', address:'0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label:'Ilyas Wallet', chains:{}, totalUsd:0, tokens:[], txs:[], risk:'UNKNOWN', lastScan:null },
-          { id:'demo2', address:'0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label:'Vitalik', chains:{}, totalUsd:0, tokens:[], txs:[], risk:'UNKNOWN', lastScan:null },
+          { id:'demo1', address:'0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label:'Ilyas Wallet', chains:{}, totalUsd:0, tokens:[], txs:[], risk:'UNKNOWN', lastScan:null, _scanning:true },
+          { id:'demo2', address:'0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label:'Vitalik', chains:{}, totalUsd:0, tokens:[], txs:[], risk:'UNKNOWN', lastScan:null, _scanning:true },
         ];
       }
 
       renderWallets();
       renderAlerts();
 
-      // Scan all wallets
+      // Scan wallets one by one (so UI updates per wallet)
       for (const w of wallets) {
+        w._scanning = true;
+        renderWallets();
         await scanWallet(w);
       }
+
+      console.log('[Init] All wallets scanned');
     }
 
-    init();
+    // Error boundary
+    init().catch(err => {
+      console.error('[Init] Fatal error:', err);
+      toast('Initialization error — check console', 'error');
+    });
 
-    // Auto-refresh every 2 min
+    // Auto-refresh every 3 min
     setInterval(async () => {
+      console.log('[Auto-refresh] Starting...');
       fetchEthPrice();
       for (const w of wallets) {
         w.chains = {};
+        w._scanning = true;
         await scanWallet(w);
       }
-    }, 120000);
+    }, 180000);
   </script>
 </body>
 </html>
