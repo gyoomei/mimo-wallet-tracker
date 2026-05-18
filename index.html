@@ -2,81 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MiMo Wallet Tracker</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦊</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     :root {
       --bg: #06060b;
       --bg2: #0c0c14;
-      --card: rgba(16,16,24,0.8);
-      --card-hover: rgba(20,20,30,0.9);
+      --bg3: #101018;
+      --card: rgba(14,14,22,0.85);
+      --card-hover: rgba(18,18,28,0.95);
       --border: rgba(255,255,255,0.06);
-      --border-hover: rgba(99,102,241,0.3);
+      --border-hover: rgba(99,102,241,0.4);
       --text: #e8e8f0;
+      --text2: #c8c8d8;
       --dim: #6b7280;
       --accent: #6366f1;
       --accent2: #a855f7;
+      --accent3: #3b82f6;
       --green: #22c55e;
       --yellow: #eab308;
       --red: #ef4444;
       --orange: #f97316;
+      --pink: #ec4899;
+      --glow-accent: 0 0 20px rgba(99,102,241,0.15);
+      --glow-green: 0 0 20px rgba(34,197,94,0.15);
+      --glow-red: 0 0 20px rgba(239,68,68,0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
     }
-    body { 
-      background: var(--bg); 
-      color: var(--text); 
-      font-family: 'Inter', -apple-system, system-ui, sans-serif; 
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Background gradient */
+    /* ── Background ── */
     body::before {
       content: '';
       position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.08) 0%, transparent 50%),
-                  radial-gradient(ellipse at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 50%);
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(99,102,241,0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168,85,247,0.06), transparent),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(59,130,246,0.04), transparent);
       pointer-events: none;
       z-index: -1;
     }
 
-    /* Header */
-    .header { 
-      padding: 16px 32px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      align-items: center; 
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Header ── */
+    .header {
+      padding: 0 24px;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      backdrop-filter: blur(20px);
-      background: rgba(6,6,11,0.8);
+      backdrop-filter: blur(24px) saturate(180%);
+      background: rgba(6,6,11,0.7);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .header h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-    .header h1 .logo { 
-      width: 32px; height: 32px; 
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark {
+      width: 36px; height: 36px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 8px;
+      border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
+      font-size: 18px;
+      box-shadow: var(--glow-accent);
     }
-    .header-right { display: flex; gap: 12px; align-items: center; }
-    .badge { 
-      background: rgba(99,102,241,0.15); 
-      border: 1px solid rgba(99,102,241,0.3);
-      color: var(--accent); 
-      font-size: 11px; 
-      padding: 4px 12px; 
-      border-radius: 20px; 
-      font-weight: 500;
+    .logo-text { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+    .logo-text span { color: var(--accent); }
+    .header-right { display: flex; gap: 8px; align-items: center; }
+    .badge {
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.2);
+      color: var(--accent);
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
     }
+    .badge.live { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.2); color: var(--green); }
     .badge.live::before {
       content: '';
       display: inline-block;
@@ -86,170 +110,209 @@
       margin-right: 6px;
       animation: pulse 2s infinite;
     }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-    
-    .link-btn {
+    @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34,197,94,0); } }
+
+    .gh-link {
       color: var(--dim);
       text-decoration: none;
       font-size: 12px;
       padding: 6px 12px;
-      border-radius: 6px;
+      border-radius: 8px;
       transition: all 0.2s;
+      display: flex; align-items: center; gap: 4px;
     }
-    .link-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .gh-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
 
-    .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    /* ── Container ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-    /* Hero */
-    .hero { 
-      text-align: center; 
-      padding: 60px 24px 48px; 
-      margin-bottom: 32px;
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 48px 20px 40px;
+      margin-bottom: 24px;
       position: relative;
     }
     .hero::before {
       content: '';
       position: absolute;
-      top: 0; left: 50%;
+      top: -40px; left: 50%;
       transform: translateX(-50%);
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
       pointer-events: none;
     }
-    .hero .tag { 
+    .hero .tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(99,102,241,0.1);
-      border: 1px solid rgba(99,102,241,0.2);
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.15);
       color: var(--accent);
       font-size: 12px;
-      padding: 6px 14px;
-      border-radius: 20px;
+      padding: 6px 16px;
+      border-radius: 24px;
       margin-bottom: 20px;
-      font-weight: 500;
+      font-weight: 600;
     }
-    .hero h2 { 
-      font-size: clamp(28px,5vw,42px); 
-      font-weight: 800; 
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 900;
       margin-bottom: 12px;
-      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #c084fc 100%);
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 40%, #c084fc 70%, #f472b6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      line-height: 1.2;
+      background-clip: text;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
     }
-    .hero p { color: var(--dim); font-size: 15px; max-width: 480px; margin: 0 auto 24px; line-height: 1.6; }
-    .hero .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .hero p { color: var(--dim); font-size: 14px; max-width: 420px; margin: 0 auto 28px; line-height: 1.7; }
+    .hero .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-    /* Buttons */
-    .btn { 
+    /* ── Buttons ── */
+    .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: white; 
-      border: none; 
-      border-radius: 10px; 
-      padding: 12px 24px; 
-      font-size: 13px; 
-      font-weight: 600; 
-      cursor: pointer; 
-      transition: all 0.2s;
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: inherit;
+      letter-spacing: 0.01em;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.3); }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(99,102,241,0.25); }
     .btn:active { transform: translateY(0); }
-    .btn-ghost { 
-      background: transparent; 
+    .btn-ghost {
+      background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
-      color: var(--text);
+      color: var(--text2);
     }
-    .btn-ghost:hover { border-color: var(--border-hover); background: rgba(99,102,241,0.05); }
-    .btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 8px; }
-    .btn-xs { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
-    .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-    .btn-danger:hover { background: rgba(239,68,68,0.25); box-shadow: none; transform: none; }
+    .btn-ghost:hover { border-color: var(--border-hover); background: rgba(99,102,241,0.06); box-shadow: none; transform: none; }
+    .btn-sm { padding: 7px 14px; font-size: 12px; }
+    .btn-xs { padding: 5px 10px; font-size: 11px; border-radius: var(--radius-xs); }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); box-shadow: var(--glow-red); transform: none; }
 
-    /* Stats */
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-    .stat-card { 
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card {
       background: var(--card);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border); 
-      border-radius: 14px; 
-      padding: 20px;
-      transition: all 0.3s;
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.3s;
     }
     .stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
-    .stat-card .icon-wrap {
+    .stat-card:hover::before { opacity: 1; }
+    .stat-icon {
       width: 36px; height: 36px;
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       font-size: 16px;
       margin-bottom: 12px;
     }
-    .stat-card .label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 500; }
-    .stat-card .value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .stat-card .sub { font-size: 11px; color: var(--dim); margin-top: 4px; }
+    .stat-label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 600; }
+    .stat-value { font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .stat-sub { font-size: 11px; color: var(--dim); margin-top: 4px; }
 
-    /* Grid */
-    .grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+    /* ── Grid ── */
+    .grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; }
 
-    /* Sections */
-    .section { 
+    /* ── Sections ── */
+    .section {
       background: var(--card);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border); 
-      border-radius: 14px; 
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
       overflow: hidden;
       transition: border-color 0.3s;
     }
-    .section:hover { border-color: var(--border-hover); }
-    .section-header { 
-      padding: 14px 20px; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
+    .section:hover { border-color: rgba(255,255,255,0.08); }
+    .section-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .section-header h2 { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    .section-header h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-    .section-body { padding: 16px 20px; }
+    .section-head h2 { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em; }
+    .section-head h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .section-body { padding: 14px 18px; }
 
-    /* Form */
-    .add-form { display: flex; gap: 8px; margin-bottom: 16px; }
-    .add-form input { 
-      flex: 1; 
-      background: rgba(0,0,0,0.3); 
-      border: 1px solid var(--border); 
-      border-radius: 10px; 
-      padding: 11px 14px; 
-      color: var(--text); 
-      font-size: 13px; 
-      font-family: 'JetBrains Mono', monospace; 
+    /* ── Form ── */
+    .add-form { display: flex; gap: 8px; margin-bottom: 14px; }
+    .add-form input {
+      flex: 1;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
       outline: none;
       transition: all 0.2s;
+      min-width: 0;
     }
     .add-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-    .add-form input::placeholder { color: var(--dim); }
+    .add-form input::placeholder { color: var(--dim); font-family: 'Inter', sans-serif; }
 
-    /* Wallet Items */
-    .wallet-item { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      padding: 14px 0; 
+    /* ── Chain Selector ── */
+    .chain-select {
+      display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .chain-btn {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--dim);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .chain-btn:hover { border-color: var(--border-hover); color: var(--text); }
+    .chain-btn.active { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); color: var(--accent); }
+
+    /* ── Wallet Items ── */
+    .wallet-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
       border-bottom: 1px solid var(--border);
       transition: all 0.2s;
+      gap: 12px;
     }
     .wallet-item:last-child { border-bottom: none; }
     .wallet-item:hover { padding-left: 4px; }
-    .wallet-info { display: flex; align-items: center; gap: 14px; }
-    .wallet-avatar { 
-      width: 40px; height: 40px; 
-      border-radius: 10px; 
-      display: flex; align-items: center; justify-content: center; 
-      font-size: 18px;
+    .wallet-info { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+    .wallet-avatar {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
       position: relative;
     }
     .wallet-avatar::after {
@@ -259,247 +322,287 @@
       border-radius: 12px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       z-index: -1;
-      opacity: 0.3;
+      opacity: 0.25;
     }
-    .wallet-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-    .wallet-address { 
-      font-size: 11px; 
-      color: var(--dim); 
+    .wallet-details { min-width: 0; }
+    .wallet-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wallet-meta {
+      font-size: 11px;
+      color: var(--dim);
       font-family: 'JetBrains Mono', monospace;
       cursor: pointer;
       transition: color 0.2s;
+      display: flex; align-items: center; gap: 6px;
     }
-    .wallet-address:hover { color: var(--accent); }
-    .wallet-actions { display: flex; gap: 6px; align-items: center; }
+    .wallet-meta:hover { color: var(--accent); }
+    .wallet-chain { font-size: 9px; padding: 1px 5px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+    .wallet-actions { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 
-    /* Risk Badge */
-    .risk { 
-      padding: 4px 10px; 
-      border-radius: 6px; 
-      font-size: 10px; 
-      font-weight: 700; 
-      text-transform: uppercase; 
+    /* ── Risk Badge ── */
+    .risk {
+      padding: 3px 8px;
+      border-radius: var(--radius-xs);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
       letter-spacing: 0.06em;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
     }
     .risk::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
-    .risk-LOW { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .risk-LOW { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.15); }
     .risk-LOW::before { background: var(--green); }
-    .risk-MEDIUM { background: rgba(234,179,8,0.12); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+    .risk-MEDIUM { background: rgba(234,179,8,0.1); color: var(--yellow); border: 1px solid rgba(234,179,8,0.15); }
     .risk-MEDIUM::before { background: var(--yellow); }
-    .risk-HIGH { background: rgba(249,115,22,0.12); color: var(--orange); border: 1px solid rgba(249,115,22,0.2); }
+    .risk-HIGH { background: rgba(249,115,22,0.1); color: var(--orange); border: 1px solid rgba(249,115,22,0.15); }
     .risk-HIGH::before { background: var(--orange); }
-    .risk-CRITICAL { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-    .risk-CRITICAL::before { background: var(--red); }
-    .risk-UNKNOWN { background: rgba(107,114,128,0.12); color: var(--dim); border: 1px solid rgba(107,114,128,0.2); }
+    .risk-CRITICAL { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
+    .risk-CRITICAL::before { background: var(--red); animation: pulse 1.5s infinite; }
+    .risk-UNKNOWN { background: rgba(107,114,128,0.1); color: var(--dim); border: 1px solid rgba(107,114,128,0.15); }
     .risk-UNKNOWN::before { background: var(--dim); }
 
-    /* Alerts */
-    .alert-item { 
-      padding: 12px 0; 
+    /* ── Alerts ── */
+    .alert-item {
+      padding: 10px 0;
       border-bottom: 1px solid var(--border);
       transition: all 0.2s;
     }
     .alert-item:last-child { border-bottom: none; }
     .alert-item:hover { padding-left: 4px; }
-    .alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .alert-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .alert-dot.warning { background: var(--yellow); box-shadow: 0 0 8px rgba(234,179,8,0.4); }
-    .alert-dot.info { background: var(--accent); box-shadow: 0 0 8px rgba(99,102,241,0.4); }
-    .alert-dot.critical { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.4); animation: pulse 1.5s infinite; }
-    .alert-type { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
-    .alert-msg { font-size: 13px; line-height: 1.4; }
-    .alert-time { font-size: 11px; color: var(--dim); margin-top: 4px; }
+    .alert-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .alert-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .alert-dot.warning { background: var(--yellow); box-shadow: 0 0 8px rgba(234,179,8,0.3); }
+    .alert-dot.info { background: var(--accent); box-shadow: 0 0 8px rgba(99,102,241,0.3); }
+    .alert-dot.critical { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.3); animation: pulse 1.5s infinite; }
+    .alert-type { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+    .alert-msg { font-size: 12px; line-height: 1.4; color: var(--text2); }
+    .alert-time { font-size: 10px; color: var(--dim); margin-top: 3px; }
 
-    /* Transactions */
-    .tx-item { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      padding: 10px 0; 
-      border-bottom: 1px solid var(--border); 
+    /* ── Transactions ── */
+    .tx-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
       font-size: 12px;
       transition: all 0.2s;
+      gap: 8px;
     }
     .tx-item:last-child { border-bottom: none; }
     .tx-item:hover { padding-left: 4px; }
-    .tx-left { display: flex; align-items: center; gap: 10px; }
-    .tx-method { 
-      background: rgba(99,102,241,0.1); 
-      color: var(--accent); 
-      padding: 3px 8px; 
-      border-radius: 5px; 
-      font-size: 10px; 
-      font-weight: 600; 
+    .tx-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .tx-method {
+      background: rgba(99,102,241,0.1);
+      color: var(--accent);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
       text-transform: uppercase;
       font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
     }
-    .tx-hash { font-family: 'JetBrains Mono', monospace; color: var(--dim); font-size: 11px; }
-    .tx-right { text-align: right; }
-    .tx-value { font-weight: 600; font-variant-numeric: tabular-nums; }
-    .tx-time { color: var(--dim); font-size: 11px; margin-top: 2px; }
-    .tx-status { 
-      display: inline-block;
-      width: 6px; height: 6px; 
-      border-radius: 50%; 
-      margin-left: 6px;
+    .tx-hash {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--dim);
+      font-size: 11px;
+      cursor: pointer;
     }
+    .tx-hash:hover { color: var(--accent); }
+    .tx-status { display: inline-block; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
     .tx-status.success { background: var(--green); }
     .tx-status.failed { background: var(--red); }
+    .tx-right { text-align: right; flex-shrink: 0; }
+    .tx-value { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 12px; }
+    .tx-time { color: var(--dim); font-size: 10px; margin-top: 2px; }
 
-    /* Analysis */
-    .analysis-block { margin-bottom: 16px; }
-    .analysis-label { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 8px; }
-    .analysis-summary { font-size: 13px; line-height: 1.6; color: var(--dim); margin-bottom: 12px; }
+    /* ── Analysis ── */
+    .analysis-block { margin-bottom: 14px; }
+    .analysis-block:last-child { margin-bottom: 0; }
+    .analysis-label { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 8px; }
+    .analysis-summary { font-size: 12px; line-height: 1.6; color: var(--dim); margin-bottom: 12px; }
     .analysis-list { list-style: none; }
-    .analysis-list li { 
-      font-size: 12px; 
-      color: var(--dim); 
-      padding: 6px 0; 
-      padding-left: 16px; 
+    .analysis-list li {
+      font-size: 12px;
+      color: var(--text2);
+      padding: 5px 0;
+      padding-left: 16px;
       position: relative;
       border-bottom: 1px solid var(--border);
+      line-height: 1.5;
     }
     .analysis-list li:last-child { border-bottom: none; }
-    .analysis-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+    .analysis-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 
-    /* Empty State */
-    .empty { text-align: center; padding: 40px 20px; color: var(--dim); }
-    .empty .icon { font-size: 36px; margin-bottom: 12px; opacity: 0.6; }
-    .empty p { font-size: 13px; line-height: 1.5; }
+    /* ── Empty State ── */
+    .empty { text-align: center; padding: 32px 16px; color: var(--dim); }
+    .empty .icon { font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
+    .empty p { font-size: 12px; line-height: 1.6; }
 
-    /* Loading */
+    /* ── Loading ── */
     .loading { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; color: var(--dim); font-size: 12px; }
-    .spinner { 
-      width: 16px; height: 16px; 
-      border: 2px solid var(--border); 
-      border-top-color: var(--accent); 
-      border-radius: 50%; 
-      animation: spin 0.7s linear infinite; 
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Toast */
+    /* ── Toast ── */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--card);
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      padding: 10px 18px;
       font-size: 13px;
       display: flex;
       align-items: center;
       gap: 8px;
-      backdrop-filter: blur(12px);
-      transform: translateY(100px);
+      backdrop-filter: blur(16px);
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1000;
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
-    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .toast.success { border-color: rgba(34,197,94,0.3); }
     .toast.error { border-color: rgba(239,68,68,0.3); }
 
-    /* Responsive */
-    @media (max-width: 900px) {
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .grid { grid-template-columns: 1fr; }
-      .header { padding: 12px 16px; }
-      .container { padding: 16px; }
+    /* ── Token List ── */
+    .token-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
     }
-    @media (max-width: 480px) {
-      .stats { grid-template-columns: 1fr; }
+    .token-item:last-child { border-bottom: none; }
+    .token-info { display: flex; align-items: center; gap: 8px; }
+    .token-icon { width: 24px; height: 24px; border-radius: 50%; background: rgba(99,102,241,0.15); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--accent); }
+    .token-name { font-size: 12px; font-weight: 600; }
+    .token-symbol { font-size: 10px; color: var(--dim); }
+    .token-balance { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+    .token-usd { font-size: 10px; color: var(--dim); text-align: right; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .header { padding: 0 14px; height: 52px; }
+      .logo-text { font-size: 15px; }
+      .badge { display: none; }
+      .gh-link span { display: none; }
+      .container { padding: 12px; }
+      .hero { padding: 32px 12px 28px; }
+      .hero h1 { font-size: 24px; }
+      .hero p { font-size: 13px; }
+      .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .stat-card { padding: 14px; }
+      .stat-value { font-size: 20px; }
       .add-form { flex-direction: column; }
-      .add-form input:last-of-type { max-width: 100%; }
+      .wallet-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .wallet-actions { width: 100%; justify-content: flex-start; }
+      .tx-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .tx-right { text-align: left; }
+      .section-body { padding: 12px 14px; }
+      .chain-select { gap: 4px; }
+      .chain-btn { padding: 4px 8px; font-size: 10px; }
+    }
+    @media (max-width: 380px) {
+      .stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
   <div class="header">
-    <h1>
-      <div class="logo">🦊</div>
-      MiMo Wallet Tracker
-    </h1>
+    <div class="header-left">
+      <div class="logo-mark">🦊</div>
+      <div class="logo-text">MiMo <span>Tracker</span></div>
+    </div>
     <div class="header-right">
-      <div class="badge">Powered by MiMo V2.5</div>
+      <div class="badge">MiMo V2.5</div>
       <div class="badge live">Live</div>
-      <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="link-btn">GitHub</a>
+      <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="gh-link">⭐ <span>GitHub</span></a>
     </div>
   </div>
 
   <div class="container">
-    <!-- Hero -->
     <div class="hero">
       <div class="tag">🛡️ Blockchain Security Intelligence</div>
-      <h2>AI-Powered Wallet<br>Monitoring</h2>
-      <p>Track EVM wallets in real-time. MiMo AI analyzes transaction patterns, detects threats, and delivers actionable security insights.</p>
+      <h1>AI-Powered Wallet<br>Monitoring</h1>
+      <p>Track any EVM wallet in real-time. Analyze transactions, detect threats, and monitor token balances — 100% free.</p>
       <div class="actions">
-        <button class="btn" onclick="document.getElementById('wallets').scrollIntoView({behavior:'smooth'})">
-          <span>🚀</span> Try Demo
-        </button>
-        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="btn btn-ghost">
-          <span>⭐</span> View Source
-        </a>
+        <button class="btn" onclick="document.getElementById('wallets').scrollIntoView({behavior:'smooth'})">🚀 Start Tracking</button>
+        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="btn btn-ghost">⭐ Star on GitHub</a>
       </div>
     </div>
 
-    <!-- Stats -->
     <div class="stats">
       <div class="stat-card">
-        <div class="icon-wrap" style="background:rgba(99,102,241,0.1)">🦊</div>
-        <div class="label">Wallets</div>
-        <div class="value" id="stat-wallets">0</div>
-        <div class="sub">Tracked addresses</div>
+        <div class="stat-icon" style="background:rgba(99,102,241,0.1)">🦊</div>
+        <div class="stat-label">Wallets</div>
+        <div class="stat-value" id="stat-wallets">0</div>
+        <div class="stat-sub">Tracked addresses</div>
       </div>
       <div class="stat-card">
-        <div class="icon-wrap" style="background:rgba(234,179,8,0.1)">🔔</div>
-        <div class="label">Alerts</div>
-        <div class="value" id="stat-alerts">0</div>
-        <div class="sub">Active warnings</div>
+        <div class="stat-icon" style="background:rgba(234,179,8,0.1)">🔔</div>
+        <div class="stat-label">Alerts</div>
+        <div class="stat-value" id="stat-alerts">0</div>
+        <div class="stat-sub">Active warnings</div>
       </div>
       <div class="stat-card">
-        <div class="icon-wrap" style="background:rgba(34,197,94,0.1)">🧠</div>
-        <div class="label">Analyses</div>
-        <div class="value" id="stat-analyses">0</div>
-        <div class="sub">AI-powered scans</div>
+        <div class="stat-icon" style="background:rgba(34,197,94,0.1)">🧠</div>
+        <div class="stat-label">Scans</div>
+        <div class="stat-value" id="stat-analyses">0</div>
+        <div class="stat-sub">AI analyses run</div>
       </div>
       <div class="stat-card">
-        <div class="icon-wrap" style="background:rgba(168,85,247,0.1)">⛓️</div>
-        <div class="label">Engine</div>
-        <div class="value" style="font-size:16px;color:var(--green);">MiMo V2.5</div>
-        <div class="sub">Online</div>
+        <div class="stat-icon" style="background:rgba(168,85,247,0.1)">⛓️</div>
+        <div class="stat-label">Chains</div>
+        <div class="stat-value" id="stat-chains">3</div>
+        <div class="stat-sub">ETH · BSC · Polygon</div>
       </div>
     </div>
 
-    <!-- Main Grid -->
     <div class="grid">
       <div>
         <!-- Wallets -->
         <div class="section" id="wallets">
-          <div class="section-header">
+          <div class="section-head">
             <h2><span class="dot"></span> Tracked Wallets</h2>
             <button class="btn btn-xs btn-ghost" onclick="refreshAll()">↻ Refresh</button>
           </div>
           <div class="section-body">
+            <div class="chain-select" id="chain-tabs">
+              <button class="chain-btn active" data-chain="eth" onclick="setChain('eth')">Ξ Ethereum</button>
+              <button class="chain-btn" data-chain="bsc" onclick="setChain('bsc')">◆ BSC</button>
+              <button class="chain-btn" data-chain="polygon" onclick="setChain('polygon')">⬡ Polygon</button>
+            </div>
             <div class="add-form">
-              <input type="text" id="input-address" placeholder="0x... Ethereum address" />
-              <input type="text" id="input-label" placeholder="Label (optional)" style="max-width:160px;" />
+              <input type="text" id="input-address" placeholder="0x... wallet address" />
+              <input type="text" id="input-label" placeholder="Label" style="max-width:140px;" />
               <button class="btn btn-sm" onclick="addWallet()">+ Add</button>
             </div>
             <div id="wallet-list">
-              <div class="loading"><div class="spinner"></div> Loading wallets...</div>
+              <div class="loading"><div class="spinner"></div> Loading...</div>
             </div>
           </div>
         </div>
 
         <!-- Transactions -->
-        <div class="section" style="margin-top:16px;">
-          <div class="section-header">
-            <h2><span class="dot"></span> Recent Transactions</h2>
+        <div class="section" style="margin-top:14px;">
+          <div class="section-head">
+            <h2><span class="dot"></span> Transactions</h2>
             <span id="tx-wallet-label" style="font-size:11px;color:var(--dim);">Select a wallet</span>
           </div>
           <div class="section-body" id="tx-list">
@@ -509,33 +612,47 @@
             </div>
           </div>
         </div>
+
+        <!-- Tokens -->
+        <div class="section" style="margin-top:14px;">
+          <div class="section-head">
+            <h2><span class="dot" style="background:var(--pink)"></span> Token Holdings</h2>
+            <span id="token-wallet-label" style="font-size:11px;color:var(--dim);">Select a wallet</span>
+          </div>
+          <div class="section-body" id="token-list">
+            <div class="empty">
+              <div class="icon">💰</div>
+              <p>Click "Tokens" on a wallet to view ERC-20 holdings</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div>
         <!-- Alerts -->
         <div class="section">
-          <div class="section-header">
+          <div class="section-head">
             <h2><span class="dot" style="background:var(--yellow)"></span> Alerts</h2>
             <span id="alert-count" style="font-size:11px;color:var(--dim);">0 active</span>
           </div>
           <div class="section-body" id="alert-list">
             <div class="empty">
               <div class="icon">🔔</div>
-              <p>No alerts yet. Add a wallet and analyze it.</p>
+              <p>No alerts yet</p>
             </div>
           </div>
         </div>
 
         <!-- Analysis -->
-        <div class="section" style="margin-top:16px;">
-          <div class="section-header">
+        <div class="section" style="margin-top:14px;">
+          <div class="section-head">
             <h2><span class="dot" style="background:var(--accent2)"></span> AI Analysis</h2>
           </div>
           <div class="section-body">
             <div id="analysis-content">
               <div class="empty">
                 <div class="icon">🧠</div>
-                <p>Select a wallet and click "Analyze" to get AI-powered risk assessment</p>
+                <p>Click "Analyze" on a wallet for AI risk assessment</p>
               </div>
             </div>
           </div>
@@ -544,7 +661,6 @@
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script>
@@ -552,33 +668,97 @@
     let wallets = [];
     let allAlerts = [];
     let analysisCount = 0;
+    let currentChain = 'eth';
 
-    // ── Etherscan API (free tier, no key needed for demo) ──
-    const ETHERSCAN_API = 'https://api.etherscan.io/api';
+    // ── Chain Config (100% free public endpoints) ──
+    const CHAINS = {
+      eth: {
+        name: 'Ethereum',
+        api: 'https://api.etherscan.io/api',
+        symbol: 'ETH',
+        explorer: 'https://etherscan.io',
+        color: '#627eea',
+      },
+      bsc: {
+        name: 'BSC',
+        api: 'https://api.bscscan.com/api',
+        symbol: 'BNB',
+        explorer: 'https://bscscan.com',
+        color: '#f0b90b',
+      },
+      polygon: {
+        name: 'Polygon',
+        api: 'https://api.polygonscan.com/api',
+        symbol: 'MATIC',
+        explorer: 'https://polygonscan.com',
+        color: '#8247e5',
+      },
+    };
 
-    async function fetchRealTransactions(address, limit = 10) {
+    function setChain(chain) {
+      currentChain = chain;
+      document.querySelectorAll('.chain-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.chain === chain);
+      });
+    }
+
+    // ── API Calls (free, no key needed) ──
+    async function apiGet(chain, params) {
+      const url = `${CHAINS[chain].api}?${new URLSearchParams(params)}`;
       try {
-        const url = `${ETHERSCAN_API}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=${limit}&sort=desc`;
         const res = await fetch(url);
-        const data = await res.json();
-        if (data.status === '1' && data.result) {
-          return data.result.map(tx => ({
-            hash: tx.hash,
-            from: tx.from.toLowerCase(),
-            to: (tx.to || '').toLowerCase(),
-            value: (parseInt(tx.value) / 1e18).toFixed(6),
-            gasUsed: tx.gasUsed,
-            timeStamp: new Date(parseInt(tx.timeStamp) * 1000),
-            method: decodeMethod(tx.input),
-            status: tx.isError === '1' ? 'failed' : 'success',
-            direction: tx.from.toLowerCase() === address.toLowerCase() ? 'out' : 'in'
-          }));
-        }
-        return [];
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
       } catch (e) {
-        console.error('Etherscan error:', e);
-        return [];
+        console.error('API error:', e);
+        return null;
       }
+    }
+
+    async function fetchBalance(address, chain) {
+      const data = await apiGet(chain, { module: 'account', action: 'balance', address, tag: 'latest' });
+      if (data && data.status === '1') return (parseInt(data.result) / 1e18).toFixed(4);
+      return '0';
+    }
+
+    async function fetchTransactions(address, chain, limit = 10) {
+      const data = await apiGet(chain, {
+        module: 'account', action: 'txlist', address,
+        startblock: 0, endblock: 99999999, page: 1, offset: limit, sort: 'desc'
+      });
+      if (!data || data.status !== '1' || !data.result) return [];
+      return data.result.map(tx => ({
+        hash: tx.hash,
+        from: tx.from.toLowerCase(),
+        to: (tx.to || '').toLowerCase(),
+        value: (parseInt(tx.value) / 1e18).toFixed(6),
+        gasUsed: tx.gasUsed,
+        gasPrice: tx.gasPrice,
+        timeStamp: new Date(parseInt(tx.timeStamp) * 1000),
+        method: decodeMethod(tx.input),
+        status: tx.isError === '1' ? 'failed' : 'success',
+        direction: tx.from.toLowerCase() === address.toLowerCase() ? 'out' : 'in',
+        chain,
+      }));
+    }
+
+    async function fetchTokenTransfers(address, chain, limit = 20) {
+      const data = await apiGet(chain, {
+        module: 'account', action: 'tokentx', address,
+        startblock: 0, endblock: 99999999, page: 1, offset: limit, sort: 'desc'
+      });
+      if (!data || data.status !== '1' || !data.result) return [];
+      return data.result.map(tx => ({
+        hash: tx.hash,
+        name: tx.tokenName,
+        symbol: tx.tokenSymbol,
+        value: (parseInt(tx.value) / Math.pow(10, parseInt(tx.tokenDecimal))).toFixed(4),
+        from: tx.from.toLowerCase(),
+        to: tx.to.toLowerCase(),
+        timeStamp: new Date(parseInt(tx.timeStamp) * 1000),
+        direction: tx.from.toLowerCase() === address.toLowerCase() ? 'out' : 'in',
+        contractAddress: tx.contractAddress,
+      }));
     }
 
     function decodeMethod(input) {
@@ -586,82 +766,60 @@
       const sig = input.slice(0, 10);
       const methods = {
         '0x38ed1739': 'swap', '0x8803dbee': 'swap', '0x7ff36ab5': 'swap',
+        '0x18cbafe5': 'swap', '0xfb3bdb41': 'swap', '0x5c11d795': 'swap',
         '0xa9059cbb': 'transfer', '0x23b872dd': 'transferFrom',
         '0x095ea7b3': 'approve', '0x39509351': 'approve',
-        '0x40c10f19': 'mint', '0xa0712d68': 'mint',
-        '0x1249c58b': 'mint', '0x6a627842': 'mint',
-        '0x5c11d795': 'swapExactTokensForTokens',
-        '0x18cbafe5': 'swapExactTokensForETH',
-        '0xfb3bdb41': 'swapETHForExactTokens',
+        '0x40c10f19': 'mint', '0xa0712d68': 'mint', '0x1249c58b': 'mint',
         '0xd0e30db0': 'deposit', '0x2e1a7d4d': 'withdraw',
         '0x3ccfd60b': 'withdraw', '0x48c54b9d': 'claim',
         '0xe9fad8ee': 'exit', '0x8b3e96f2': 'delegate',
+        '0x8456cb59': 'pause', '0x3f4ba83a': 'unpause',
       };
       return methods[sig] || 'contract';
     }
 
-    async function fetchEthBalance(address) {
-      try {
-        const url = `${ETHERSCAN_API}?module=account&action=balance&address=${address}&tag=latest`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.status === '1') return (parseInt(data.result) / 1e18).toFixed(4);
-        return '0';
-      } catch { return '0'; }
-    }
-
-    // ── AI Analysis (MiMo-style pattern detection) ──
+    // ── AI Analysis ──
     function analyzeTransactions(address, txs) {
-      const totalTxs = txs.length;
-      const failedTxs = txs.filter(t => t.status === 'failed').length;
-      const largeTxs = txs.filter(t => parseFloat(t.value) > 1.0).length;
+      const failed = txs.filter(t => t.status === 'failed').length;
+      const large = txs.filter(t => parseFloat(t.value) > 1.0).length;
       const approvals = txs.filter(t => t.method === 'approve').length;
       const swaps = txs.filter(t => t.method.includes('swap')).length;
+      const mints = txs.filter(t => t.method === 'mint').length;
       const outgoing = txs.filter(t => t.direction === 'out').length;
       const incoming = txs.filter(t => t.direction === 'in').length;
 
-      let riskScore = 0;
+      let risk = 0;
       const patterns = [];
-      const recommendations = [];
+      const recs = [];
 
-      if (failedTxs > 2) { riskScore += 2; patterns.push(`${failedTxs} failed transactions detected`); recommendations.push('Investigate failed transactions — possible contract issues'); }
-      if (largeTxs > 3) { riskScore += 1; patterns.push(`${largeTxs} large transfers (>1 ETH)`); recommendations.push('Set up alerts for transfers exceeding 1 ETH'); }
-      if (approvals > 0) { riskScore += 1; patterns.push(`${approvals} token approval(s) detected`); recommendations.push('Review and revoke unnecessary token approvals'); }
-      if (swaps > 3) { patterns.push(`Active DEX trading (${swaps} swaps)`); }
-      if (outgoing > incoming * 2) { riskScore += 1; patterns.push('Net outflow — more outgoing than incoming'); }
+      if (failed > 2) { risk += 2; patterns.push(`${failed} failed transactions`); recs.push('Investigate failed txs — possible contract issues'); }
+      if (large > 3) { risk += 1; patterns.push(`${large} large transfers (>1 ETH)`); recs.push('Set alerts for large transfers'); }
+      if (approvals > 0) { risk += 1; patterns.push(`${approvals} token approval(s)`); recs.push('Review & revoke unnecessary approvals'); }
+      if (swaps > 3) patterns.push(`Active DEX trading (${swaps} swaps)`);
+      if (mints > 0) patterns.push(`${mints} NFT/token mint(s)`);
+      if (outgoing > incoming * 2) { risk += 1; patterns.push('Net outflow — sending more than receiving'); }
 
-      const riskLevel = riskScore >= 4 ? 'CRITICAL' : riskScore >= 2 ? 'HIGH' : riskScore >= 1 ? 'MEDIUM' : 'LOW';
-      
-      if (riskLevel === 'LOW') {
-        patterns.push('Normal wallet activity');
-        recommendations.push('Continue monitoring');
-      }
+      const level = risk >= 4 ? 'CRITICAL' : risk >= 2 ? 'HIGH' : risk >= 1 ? 'MEDIUM' : 'LOW';
+      if (level === 'LOW') { patterns.push('Normal wallet activity'); recs.push('Continue monitoring'); }
 
-      const totalValue = txs.reduce((sum, t) => sum + parseFloat(t.value), 0).toFixed(2);
+      const vol = txs.reduce((s, t) => s + parseFloat(t.value), 0).toFixed(2);
 
       return {
-        risk_level: riskLevel,
-        risk_score: riskScore,
-        summary: `Analyzed ${totalTxs} transactions | ${incoming} in / ${outgoing} out | Total volume: ${totalValue} ETH | ${failedTxs} failures`,
-        patterns,
-        recommendations,
-        stats: { totalTxs, failedTxs, largeTxs, approvals, swaps, incoming, outgoing, totalValue }
+        risk_level: level, risk_score: risk,
+        summary: `${txs.length} txs analyzed · ${incoming} in / ${outgoing} out · ${vol} ${CHAINS[currentChain].symbol} volume · ${failed} failures`,
+        patterns, recommendations: recs,
       };
     }
 
-    // ── Alert Detection ──
-    function detectAlerts(address, txs, label) {
+    function detectAlerts(txs, label) {
       const alerts = [];
-      for (const tx of txs.slice(0, 5)) {
-        if (parseFloat(tx.value) > 1.0 && tx.direction === 'out') {
-          alerts.push({ type: 'large_transfer', severity: 'warning', message: `${label}: Sent ${tx.value} ETH via ${tx.method}`, time: tx.timeStamp, address });
-        }
-        if (tx.status === 'failed') {
-          alerts.push({ type: 'failed_tx', severity: 'info', message: `${label}: Failed ${tx.method} transaction`, time: tx.timeStamp, address });
-        }
-        if (tx.method === 'approve') {
-          alerts.push({ type: 'token_approval', severity: 'warning', message: `${label}: Token approval to ${tx.to.slice(0,10)}...`, time: tx.timeStamp, address });
-        }
+      for (const tx of txs.slice(0, 8)) {
+        if (parseFloat(tx.value) > 1.0 && tx.direction === 'out')
+          alerts.push({ severity: 'warning', type: 'large_transfer', message: `${label}: Sent ${tx.value} ${CHAINS[tx.chain].symbol} via ${tx.method}`, time: tx.timeStamp });
+        if (tx.status === 'failed')
+          alerts.push({ severity: 'info', type: 'failed_tx', message: `${label}: Failed ${tx.method}`, time: tx.timeStamp });
+        if (tx.method === 'approve')
+          alerts.push({ severity: 'warning', type: 'approval', message: `${label}: Token approval to ${tx.to.slice(0, 8)}...`, time: tx.timeStamp });
       }
       return alerts;
     }
@@ -670,23 +828,28 @@
     function renderWallets() {
       const el = document.getElementById('wallet-list');
       if (!wallets.length) {
-        el.innerHTML = '<div class="empty"><div class="icon">🦊</div><p>No wallets tracked yet.<br>Add an EVM address to start.</p></div>';
+        el.innerHTML = '<div class="empty"><div class="icon">🦊</div><p>No wallets yet.<br>Add an address above to start.</p></div>';
+        document.getElementById('stat-wallets').textContent = '0';
         return;
       }
       el.innerHTML = wallets.map(w => `
         <div class="wallet-item" id="wallet-${w.id}">
           <div class="wallet-info">
-            <div class="wallet-avatar" style="background:${gradientFor(w.address)}">🦊</div>
-            <div>
-              <div class="wallet-name">${w.label}</div>
-              <div class="wallet-address" onclick="copyAddress('${w.address}')" title="Click to copy">${w.address.slice(0,6)}...${w.address.slice(-4)} · ${w.balance || '...'} ETH</div>
+            <div class="wallet-avatar" style="background:${gradient(w.address)}">🦊</div>
+            <div class="wallet-details">
+              <div class="wallet-name">${esc(w.label)}</div>
+              <div class="wallet-meta" onclick="copy('${w.address}')" title="Click to copy">
+                <span class="wallet-chain" style="background:${CHAINS[w.chain].color}22;color:${CHAINS[w.chain].color}">${w.chain.toUpperCase()}</span>
+                ${w.address.slice(0,6)}...${w.address.slice(-4)} · ${w.balance || '...'} ${CHAINS[w.chain].symbol}
+              </div>
             </div>
           </div>
           <div class="wallet-actions">
-            <span class="risk risk-${w.riskLevel || 'UNKNOWN'}">${w.riskLevel || '—'}</span>
-            <button class="btn btn-xs" onclick="analyzeWallet('${w.id}')">🧠 Analyze</button>
-            <button class="btn btn-xs btn-ghost" onclick="loadTxs('${w.id}')">📋 Txs</button>
-            <button class="btn btn-xs btn-danger" onclick="removeWallet('${w.id}')">✕</button>
+            <span class="risk risk-${w.risk || 'UNKNOWN'}">${w.risk || '—'}</span>
+            <button class="btn btn-xs" onclick="analyze('${w.id}')">🧠</button>
+            <button class="btn btn-xs btn-ghost" onclick="loadTxs('${w.id}')">📋</button>
+            <button class="btn btn-xs btn-ghost" onclick="loadTokens('${w.id}')">💰</button>
+            <button class="btn btn-xs btn-danger" onclick="remove('${w.id}')">✕</button>
           </div>
         </div>
       `).join('');
@@ -697,208 +860,192 @@
       const el = document.getElementById('alert-list');
       const recent = allAlerts.slice(0, 10);
       if (!recent.length) {
-        el.innerHTML = '<div class="empty"><div class="icon">🔔</div><p>No alerts yet.</p></div>';
+        el.innerHTML = '<div class="empty"><div class="icon">🔔</div><p>No alerts yet</p></div>';
         document.getElementById('alert-count').textContent = '0 active';
+        document.getElementById('stat-alerts').textContent = '0';
         return;
       }
       document.getElementById('alert-count').textContent = `${allAlerts.length} active`;
       document.getElementById('stat-alerts').textContent = allAlerts.length;
       el.innerHTML = recent.map(a => `
         <div class="alert-item">
-          <div class="alert-header">
+          <div class="alert-head">
             <div class="alert-dot ${a.severity}"></div>
             <span class="alert-type">${a.type.replace(/_/g, ' ')}</span>
           </div>
-          <div class="alert-msg">${a.message}</div>
-          <div class="alert-time">${timeAgo(a.time)}</div>
+          <div class="alert-msg">${esc(a.message)}</div>
+          <div class="alert-time">${ago(a.time)}</div>
         </div>
       `).join('');
     }
 
-    function renderTransactions(txs, label) {
+    function renderTxs(txs, label) {
       const el = document.getElementById('tx-list');
       document.getElementById('tx-wallet-label').textContent = label;
-      if (!txs.length) {
-        el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>No transactions found</p></div>';
-        return;
-      }
+      if (!txs.length) { el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>No transactions found</p></div>'; return; }
       el.innerHTML = txs.map(tx => `
         <div class="tx-item">
           <div class="tx-left">
             <span class="tx-method">${tx.method}</span>
-            <span class="tx-hash">${tx.hash.slice(0,10)}...</span>
+            <span class="tx-hash" onclick="window.open('${CHAINS[tx.chain].explorer}/tx/${tx.hash}','_blank')">${tx.hash.slice(0,10)}...</span>
             <span class="tx-status ${tx.status}"></span>
           </div>
           <div class="tx-right">
-            <div class="tx-value">${tx.direction === 'in' ? '+' : '-'}${tx.value} ETH</div>
-            <div class="tx-time">${timeAgo(tx.timeStamp)}</div>
+            <div class="tx-value" style="color:${tx.direction === 'in' ? 'var(--green)' : 'var(--red)'}">${tx.direction === 'in' ? '+' : '-'}${tx.value} ${CHAINS[tx.chain].symbol}</div>
+            <div class="tx-time">${ago(tx.timeStamp)}</div>
           </div>
         </div>
       `).join('');
     }
 
-    function renderAnalysis(analysis, label) {
+    function renderTokens(tokens, label) {
+      const el = document.getElementById('token-list');
+      document.getElementById('token-wallet-label').textContent = label;
+      if (!tokens.length) { el.innerHTML = '<div class="empty"><div class="icon">💰</div><p>No token transfers found</p></div>'; return; }
+
+      // Aggregate by token
+      const agg = {};
+      for (const t of tokens) {
+        if (!agg[t.symbol]) agg[t.symbol] = { name: t.name, symbol: t.symbol, total: 0, contract: t.contractAddress };
+        agg[t.symbol].total += parseFloat(t.value) * (t.direction === 'in' ? 1 : -1);
+      }
+
+      el.innerHTML = Object.values(agg).filter(t => Math.abs(t.total) > 0.0001).map(t => `
+        <div class="token-item">
+          <div class="token-info">
+            <div class="token-icon">${t.symbol.slice(0,2)}</div>
+            <div>
+              <div class="token-name">${esc(t.name)}</div>
+              <div class="token-symbol">${esc(t.symbol)}</div>
+            </div>
+          </div>
+          <div>
+            <div class="token-balance">${t.total > 0 ? '+' : ''}${t.total.toFixed(4)}</div>
+          </div>
+        </div>
+      `).join('') || '<div class="empty"><p>No significant token movements</p></div>';
+    }
+
+    function renderAnalysis(a, label) {
       analysisCount++;
       document.getElementById('stat-analyses').textContent = analysisCount;
-      const el = document.getElementById('analysis-content');
-      el.innerHTML = `
+      document.getElementById('analysis-content').innerHTML = `
         <div class="analysis-block">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <span style="font-size:13px;font-weight:600;">${label}</span>
-            <span class="risk risk-${analysis.risk_level}">${analysis.risk_level}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:13px;font-weight:700;">${esc(label)}</span>
+            <span class="risk risk-${a.risk_level}">${a.risk_level}</span>
           </div>
-          <div class="analysis-summary">${analysis.summary}</div>
+          <div class="analysis-summary">${a.summary}</div>
         </div>
         <div class="analysis-block">
-          <div class="analysis-label">Patterns Detected</div>
-          <ul class="analysis-list">${analysis.patterns.map(p => `<li>${p}</li>`).join('')}</ul>
+          <div class="analysis-label">Patterns</div>
+          <ul class="analysis-list">${a.patterns.map(p => `<li>${p}</li>`).join('')}</ul>
         </div>
         <div class="analysis-block">
           <div class="analysis-label">Recommendations</div>
-          <ul class="analysis-list">${analysis.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+          <ul class="analysis-list">${a.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
         </div>
       `;
     }
 
     // ── Actions ──
     async function addWallet() {
-      const address = document.getElementById('input-address').value.trim();
+      const addr = document.getElementById('input-address').value.trim();
       const label = document.getElementById('input-label').value.trim();
-      if (!address || !address.startsWith('0x') || address.length !== 42) {
-        showToast('Enter a valid EVM address (0x...)', 'error');
-        return;
-      }
-      if (wallets.find(w => w.address.toLowerCase() === address.toLowerCase())) {
-        showToast('Wallet already tracked', 'error');
-        return;
-      }
+      if (!addr || !addr.startsWith('0x') || addr.length !== 42) { toast('Enter a valid 0x address', 'error'); return; }
+      if (wallets.find(w => w.address.toLowerCase() === addr.toLowerCase() && w.chain === currentChain)) { toast('Already tracked', 'error'); return; }
 
-      const wallet = {
-        id: Date.now().toString(36),
-        address: address,
-        label: label || `Wallet ${wallets.length + 1}`,
-        riskLevel: 'UNKNOWN',
-        balance: '...'
-      };
-      wallets.push(wallet);
+      const w = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), address: addr, label: label || `Wallet ${wallets.length + 1}`, chain: currentChain, risk: 'UNKNOWN', balance: '...' };
+      wallets.push(w);
       document.getElementById('input-address').value = '';
       document.getElementById('input-label').value = '';
       renderWallets();
-      showToast('Wallet added! Fetching balance...', 'success');
+      toast('Fetching balance...', 'success');
 
-      // Fetch real balance
-      const balance = await fetchEthBalance(address);
-      wallet.balance = balance;
+      w.balance = await fetchBalance(addr, currentChain);
       renderWallets();
     }
 
-    function removeWallet(id) {
+    function remove(id) {
       wallets = wallets.filter(w => w.id !== id);
-      allAlerts = allAlerts.filter(a => a.address !== wallets.find(w => w.id === id)?.address);
       renderWallets();
       renderAlerts();
-      showToast('Wallet removed', 'success');
+      toast('Removed', 'success');
     }
 
-    async function analyzeWallet(id) {
-      const wallet = wallets.find(w => w.id === id);
-      if (!wallet) return;
+    async function analyze(id) {
+      const w = wallets.find(x => x.id === id);
+      if (!w) return;
+      document.getElementById('analysis-content').innerHTML = '<div class="loading"><div class="spinner"></div> Analyzing...</div>';
 
-      const el = document.getElementById('analysis-content');
-      el.innerHTML = '<div class="loading"><div class="spinner"></div> Analyzing with MiMo AI...</div>';
+      const txs = await fetchTransactions(w.address, w.chain, 20);
+      if (!txs.length) { document.getElementById('analysis-content').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>No transactions found</p></div>'; return; }
 
-      const txs = await fetchRealTransactions(wallet.address, 20);
-      if (!txs.length) {
-        el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>No transactions found. Check the address or try again.</p></div>';
-        return;
-      }
-
-      const analysis = analyzeTransactions(wallet.address, txs);
-      const alerts = detectAlerts(wallet.address, txs, wallet.label);
-      
-      wallet.riskLevel = analysis.risk_level;
+      const a = analyzeTransactions(w.address, txs);
+      const alerts = detectAlerts(txs, w.label);
+      w.risk = a.risk_level;
       allAlerts = [...alerts, ...allAlerts].slice(0, 50);
-      
       renderWallets();
       renderAlerts();
-      renderAnalysis(analysis, wallet.label);
-      showToast(`Analysis complete: ${analysis.risk_level} risk`, 'success');
+      renderAnalysis(a, w.label);
+      toast(`Risk: ${a.risk_level}`, 'success');
     }
 
     async function loadTxs(id) {
-      const wallet = wallets.find(w => w.id === id);
-      if (!wallet) return;
-
-      const el = document.getElementById('tx-list');
-      el.innerHTML = '<div class="loading"><div class="spinner"></div> Fetching from Etherscan...</div>';
-
-      const txs = await fetchRealTransactions(wallet.address, 10);
-      renderTransactions(txs, wallet.label);
+      const w = wallets.find(x => x.id === id);
+      if (!w) return;
+      document.getElementById('tx-list').innerHTML = '<div class="loading"><div class="spinner"></div> Fetching...</div>';
+      const txs = await fetchTransactions(w.address, w.chain, 15);
+      renderTxs(txs, `${w.label} (${w.chain.toUpperCase()})`);
     }
 
-    function refreshAll() {
-      wallets.forEach(async (w) => {
-        w.balance = await fetchEthBalance(w.address);
+    async function loadTokens(id) {
+      const w = wallets.find(x => x.id === id);
+      if (!w) return;
+      document.getElementById('token-list').innerHTML = '<div class="loading"><div class="spinner"></div> Fetching tokens...</div>';
+      const tokens = await fetchTokenTransfers(w.address, w.chain, 30);
+      renderTokens(tokens, `${w.label} (${w.chain.toUpperCase()})`);
+    }
+
+    async function refreshAll() {
+      toast('Refreshing...', 'success');
+      for (const w of wallets) {
+        w.balance = await fetchBalance(w.address, w.chain);
         renderWallets();
-      });
-      showToast('Refreshing balances...', 'success');
+      }
+      toast('All balances updated', 'success');
     }
 
-    function copyAddress(addr) {
-      navigator.clipboard.writeText(addr);
-      showToast('Address copied!', 'success');
-    }
+    function copy(addr) { navigator.clipboard.writeText(addr); toast('Copied!', 'success'); }
 
     // ── Helpers ──
-    function gradientFor(addr) {
-      const hash = addr.slice(2, 8);
-      const h = parseInt(hash, 16) % 360;
-      return `linear-gradient(135deg, hsl(${h},70%,50%), hsl(${(h+60)%360},70%,40%))`;
-    }
-
-    function timeAgo(date) {
-      const d = date instanceof Date ? date : new Date(date);
-      const secs = Math.floor((Date.now() - d.getTime()) / 1000);
-      if (secs < 60) return 'just now';
-      if (secs < 3600) return `${Math.floor(secs/60)}m ago`;
-      if (secs < 86400) return `${Math.floor(secs/3600)}h ago`;
-      return `${Math.floor(secs/86400)}d ago`;
-    }
-
-    function showToast(msg, type = 'success') {
+    function gradient(a) { const h = parseInt(a.slice(2,8),16)%360; return `linear-gradient(135deg,hsl(${h},70%,50%),hsl(${(h+60)%360},70%,40%))`; }
+    function ago(d) { const s=Math.floor((Date.now()-new Date(d).getTime())/1000); if(s<60)return'just now'; if(s<3600)return`${Math.floor(s/60)}m ago`; if(s<86400)return`${Math.floor(s/3600)}h ago`; return`${Math.floor(s/86400)}d ago`; }
+    function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+    function toast(msg, type='success') {
       const el = document.getElementById('toast');
       el.className = `toast ${type}`;
-      el.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${msg}`;
+      el.innerHTML = `<span>${type==='success'?'✅':'❌'}</span> ${msg}`;
       el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 2500);
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.classList.remove('show'), 2500);
     }
 
-    // ── Init with demo wallets ──
+    // ── Init ──
     async function init() {
-      const demoAddresses = [
-        { address: '0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label: 'Ilyas Wallet' },
-        { address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label: 'Vitalik' },
+      const demos = [
+        { address: '0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label: 'Ilyas Wallet', chain: 'eth' },
+        { address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label: 'Vitalik', chain: 'eth' },
       ];
-
-      for (const d of demoAddresses) {
-        const wallet = {
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
-          address: d.address,
-          label: d.label,
-          riskLevel: 'UNKNOWN',
-          balance: '...'
-        };
-        wallets.push(wallet);
+      for (const d of demos) {
+        wallets.push({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,5), ...d, risk: 'UNKNOWN', balance: '...' });
       }
       renderWallets();
-
-      // Fetch real balances
       for (const w of wallets) {
-        w.balance = await fetchEthBalance(w.address);
+        w.balance = await fetchBalance(w.address, w.chain);
         renderWallets();
       }
     }
-
     init();
   </script>
 </body>
