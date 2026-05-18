@@ -1,0 +1,105 @@
+{
+  "wallets": [
+    {
+      "id": "mparaweh",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "label": "Ilyas Wallet",
+      "chain": "ethereum",
+      "addedAt": "2026-05-18T05:21:28.457Z",
+      "lastChecked": "2026-05-18T05:21:36.688Z",
+      "riskLevel": "MEDIUM"
+    },
+    {
+      "id": "mparawep",
+      "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+      "label": "Vitalik",
+      "chain": "ethereum",
+      "addedAt": "2026-05-18T05:21:28.465Z",
+      "lastChecked": null,
+      "riskLevel": "UNKNOWN"
+    }
+  ],
+  "alerts": [
+    {
+      "type": "large_transfer",
+      "severity": "warning",
+      "message": "Large transfer: 4.391188 ETH",
+      "txHash": "0x8b68c9e3ff6020ecbd618804caf4ab76b612ec8478793fa26e3f8b64aa6abb6f",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-17T11:25:08.716Z"
+    },
+    {
+      "type": "large_transfer",
+      "severity": "warning",
+      "message": "Large transfer: 1.902310 ETH",
+      "txHash": "0xc2ef71bbb6b349793d7da8bc0f186cab2cb5e513f05d2d214a9a8b5cf5895f6a",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-17T01:34:10.884Z"
+    },
+    {
+      "type": "large_transfer",
+      "severity": "warning",
+      "message": "Large transfer: 3.910743 ETH",
+      "txHash": "0x42c1bfe86e84a9e017d0f7a09ee82242d601a4e719c76710e698d7de00f9bdd0",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-16T14:33:05.462Z"
+    },
+    {
+      "type": "large_transfer",
+      "severity": "warning",
+      "message": "Large transfer: 1.179550 ETH",
+      "txHash": "0x7428300d0795313302b20926decf5f1a860c83f28f95337a6b57c417cb250bcb",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-15T09:19:39.339Z"
+    },
+    {
+      "type": "failed_tx",
+      "severity": "info",
+      "message": "Failed transaction: swap",
+      "txHash": "0x29ed1a386a534ecfcfcb1d312c6c3dcd7310acf8f8de85aab548fac188afe440",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-13T19:26:59.559Z"
+    },
+    {
+      "type": "large_transfer",
+      "severity": "warning",
+      "message": "Large transfer: 2.444290 ETH",
+      "txHash": "0x2b6ee273eaa1ef58b3d6d0de57996e76d16db800e5dc0bee104a2c530acad181",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-13T04:10:13.349Z"
+    },
+    {
+      "type": "large_transfer",
+      "severity": "warning",
+      "message": "Large transfer: 4.286053 ETH",
+      "txHash": "0x64a84b76da5dc73a024d7f0712c4b7deabf5e24dc2dc2a5b0a40294ba285dbf8",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-12T14:07:20.896Z"
+    },
+    {
+      "type": "token_approval",
+      "severity": "warning",
+      "message": "Token approval: 0x6c7230ed...",
+      "txHash": "0x4da28c2d1943b5797b8cc819793c1cf3cc10af3c48dcdf7232803bc8a3f5da12",
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "timestamp": "2026-05-11T07:40:56.411Z"
+    }
+  ],
+  "analyses": [
+    {
+      "address": "0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4",
+      "analysis": {
+        "risk_level": "MEDIUM",
+        "summary": "Wallet 0x6c7230ed... has 10 recent transactions with 1 failures.",
+        "patterns": [
+          "1 failed transactions detected"
+        ],
+        "recommendations": [
+          "Monitor for unusual activity",
+          "Set up alerts for large transfers"
+        ]
+      },
+      "timestamp": "2026-05-18T05:21:36.688Z"
+    }
+  ]
+}

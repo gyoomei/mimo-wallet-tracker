@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiMo Wallet Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #1e1e2e;
+      --text: #e0e0e8;
+      --dim: #6b7280;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --orange: #f97316;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, system-ui, sans-serif; min-height: 100vh; }
+    
+    .header { padding: 20px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .header h1 span { color: var(--accent); }
+    .header .badge { background: var(--accent); color: white; font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+    .header .ai-badge { background: #1a1a2e; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; padding: 3px 10px; border-radius: 12px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* Stats Row */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .stat-card .label { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; }
+    .stat-card .sub { font-size: 12px; color: var(--dim); margin-top: 4px; }
+
+    /* Main Grid */
+    .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+
+    /* Wallet Section */
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .section-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .section-header h2 { font-size: 14px; font-weight: 600; }
+    .section-body { padding: 16px 20px; }
+
+    /* Add Wallet Form */
+    .add-form { display: flex; gap: 8px; margin-bottom: 16px; }
+    .add-form input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px; font-family: 'Fira Code', monospace; outline: none; }
+    .add-form input:focus { border-color: var(--accent); }
+    .add-form input::placeholder { color: var(--dim); }
+    .btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .btn:hover { background: #4f46e5; transform: translateY(-1px); }
+    .btn-sm { padding: 6px 12px; font-size: 11px; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--dim); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: var(--red); }
+    .btn-danger:hover { background: #dc2626; }
+
+    /* Wallet List */
+    .wallet-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .wallet-item:last-child { border-bottom: none; }
+    .wallet-info { display: flex; align-items: center; gap: 12px; }
+    .wallet-avatar { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .wallet-name { font-size: 13px; font-weight: 600; }
+    .wallet-address { font-size: 11px; color: var(--dim); font-family: 'Fira Code', monospace; }
+    .wallet-actions { display: flex; gap: 6px; align-items: center; }
+
+    /* Risk Badge */
+    .risk { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .risk-LOW { background: rgba(34,197,94,0.15); color: var(--green); }
+    .risk-MEDIUM { background: rgba(234,179,8,0.15); color: var(--yellow); }
+    .risk-HIGH { background: rgba(249,115,22,0.15); color: var(--orange); }
+    .risk-CRITICAL { background: rgba(239,68,68,0.15); color: var(--red); }
+    .risk-UNKNOWN { background: rgba(107,114,128,0.15); color: var(--dim); }
+
+    /* Alerts */
+    .alert-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .alert-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .alert-dot.warning { background: var(--yellow); }
+    .alert-dot.info { background: var(--accent); }
+    .alert-dot.critical { background: var(--red); }
+    .alert-type { font-size: 11px; color: var(--dim); text-transform: uppercase; }
+    .alert-msg { font-size: 13px; }
+    .alert-time { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+    /* Analysis Panel */
+    .analysis-panel { margin-top: 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: none; }
+    .analysis-panel.active { display: block; }
+    .analysis-title { font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .analysis-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+    .analysis-row .label { color: var(--dim); }
+    .analysis-list { margin-top: 8px; }
+    .analysis-list li { font-size: 12px; color: var(--dim); margin-left: 16px; margin-bottom: 4px; }
+
+    /* Transactions */
+    .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-method { background: rgba(99,102,241,0.1); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+    .tx-hash { font-family: 'Fira Code', monospace; color: var(--dim); }
+    .tx-value { font-weight: 600; }
+    .tx-time { color: var(--dim); font-size: 11px; }
+
+    /* Loading */
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 40px 20px; color: var(--dim); }
+    .empty .icon { font-size: 32px; margin-bottom: 12px; }
+    .empty p { font-size: 13px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🦊 <span>MiMo</span> Wallet Tracker</h1>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="ai-badge">Powered by MiMo V2.5</div>
+      <div class="badge" id="status-badge">Live</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">Tracked Wallets</div>
+        <div class="value" id="stat-wallets">0</div>
+        <div class="sub">Active monitoring</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Alerts</div>
+        <div class="value" id="stat-alerts">0</div>
+        <div class="sub">Last 24h</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Analyses Run</div>
+        <div class="value" id="stat-analyses">0</div>
+        <div class="sub">AI-powered</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">System Status</div>
+        <div class="value" style="color:var(--green);font-size:20px;" id="stat-status">Checking...</div>
+        <div class="sub" id="stat-ai">AI Engine</div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid">
+      <!-- Left: Wallets + Transactions -->
+      <div>
+        <div class="section">
+          <div class="section-header">
+            <h2>Tracked Wallets</h2>
+            <button class="btn btn-sm" onclick="refreshAll()">Refresh All</button>
+          </div>
+          <div class="section-body">
+            <div class="add-form">
+              <input type="text" id="input-address" placeholder="0x... Ethereum address" />
+              <input type="text" id="input-label" placeholder="Label" style="max-width:120px;" />
+              <button class="btn" onclick="addWallet()">+ Add</button>
+            </div>
+            <div id="wallet-list">
+              <div class="empty">
+                <div class="icon">🦊</div>
+                <p>No wallets tracked yet.<br>Add an address to start monitoring.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="section" style="margin-top:16px;" id="tx-section" style="display:none;">
+          <div class="section-header">
+            <h2>Recent Transactions</h2>
+            <span class="tx-time" id="tx-wallet-label"></span>
+          </div>
+          <div class="section-body" id="tx-list"></div>
+        </div>
+      </div>
+
+      <!-- Right: Alerts + Analysis -->
+      <div>
+        <div class="section">
+          <div class="section-header">
+            <h2>Alerts</h2>
+          </div>
+          <div class="section-body" id="alert-list">
+            <div class="empty">
+              <div class="icon">🔔</div>
+              <p>No alerts yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:16px;">
+          <div class="section-header">
+            <h2>AI Analysis</h2>
+          </div>
+          <div class="section-body">
+            <p style="font-size:12px;color:var(--dim);margin-bottom:12px;">Select a wallet and click Analyze to get AI-powered risk assessment.</p>
+            <div id="analysis-content">
+              <div class="empty">
+                <div class="icon">🧠</div>
+                <p>No analysis yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    let wallets = [];
+
+    // ── Fetch helpers ──
+    async function api(path, opts = {}) {
+      const res = await fetch(`${API}${path}`, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', ...opts.headers },
+        body: opts.body ? JSON.stringify(opts.body) : undefined
+      });
+      return res.json();
+    }
+
+    // ── Load data ──
+    async function loadStats() {
+      const stats = await api('/api/stats');
+      document.getElementById('stat-wallets').textContent = stats.totalWallets;
+      document.getElementById('stat-alerts').textContent = stats.totalAlerts;
+      document.getElementById('stat-analyses').textContent = stats.analysesCount;
+    }
+
+    async function loadWallets() {
+      wallets = await api('/api/wallets');
+      renderWallets();
+    }
+
+    async function loadAlerts() {
+      const alerts = await api('/api/alerts?limit=10');
+      renderAlerts(alerts);
+    }
+
+    async function loadHealth() {
+      const h = await api('/api/health');
+      document.getElementById('stat-status').textContent = 'Online';
+      document.getElementById('stat-ai').textContent = `AI: ${h.ai}`;
+    }
+
+    // ── Render ──
+    function renderWallets() {
+      const el = document.getElementById('wallet-list');
+      if (!wallets.length) {
+        el.innerHTML = '<div class="empty"><div class="icon">🦊</div><p>No wallets tracked yet.<br>Add an address to start monitoring.</p></div>';
+        return;
+      }
+      el.innerHTML = wallets.map(w => `
+        <div class="wallet-item">
+          <div class="wallet-info">
+            <div class="wallet-avatar">🦊</div>
+            <div>
+              <div class="wallet-name">${w.label}</div>
+              <div class="wallet-address">${w.address.slice(0,6)}...${w.address.slice(-4)}</div>
+            </div>
+          </div>
+          <div class="wallet-actions">
+            <span class="risk risk-${w.riskLevel || 'UNKNOWN'}">${w.riskLevel || 'UNKNOWN'}</span>
+            <button class="btn btn-sm btn-outline" onclick="analyzeWallet('${w.address}')">Analyze</button>
+            <button class="btn btn-sm btn-outline" onclick="loadTransactions('${w.address}')">Txs</button>
+            <button class="btn btn-sm btn-danger" onclick="removeWallet('${w.id}')">×</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAlerts(alerts) {
+      const el = document.getElementById('alert-list');
+      if (!alerts.length) {
+        el.innerHTML = '<div class="empty"><div class="icon">🔔</div><p>No alerts yet.</p></div>';
+        return;
+      }
+      el.innerHTML = alerts.map(a => `
+        <div class="alert-item">
+          <div class="alert-header">
+            <div class="alert-dot ${a.severity}"></div>
+            <span class="alert-type">${a.type.replace(/_/g, ' ')}</span>
+          </div>
+          <div class="alert-msg">${a.message}</div>
+          <div class="alert-time">${new Date(a.timestamp).toLocaleString()}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderAnalysis(data) {
+      const el = document.getElementById('analysis-content');
+      const { analysis, alerts, transactions } = data;
+      el.innerHTML = `
+        <div style="margin-bottom:12px;">
+          <div class="analysis-row">
+            <span class="label">Risk Level</span>
+            <span class="risk risk-${analysis.risk_level}">${analysis.risk_level}</span>
+          </div>
+          <div class="analysis-row">
+            <span class="label">Alerts</span>
+            <span>${alerts.length} detected</span>
+          </div>
+        </div>
+        <div style="font-size:13px;margin-bottom:12px;">${analysis.summary}</div>
+        <div class="analysis-list">
+          <div style="font-size:11px;color:var(--accent);margin-bottom:6px;">PATTERNS</div>
+          <ul>${(analysis.patterns || []).map(p => `<li>${p}</li>`).join('')}</ul>
+        </div>
+        <div class="analysis-list" style="margin-top:12px;">
+          <div style="font-size:11px;color:var(--accent);margin-bottom:6px;">RECOMMENDATIONS</div>
+          <ul>${(analysis.recommendations || []).map(r => `<li>${r}</li>`).join('')}</ul>
+        </div>
+      `;
+    }
+
+    // ── Actions ──
+    async function addWallet() {
+      const address = document.getElementById('input-address').value.trim();
+      const label = document.getElementById('input-label').value.trim();
+      if (!address || !address.startsWith('0x')) return alert('Enter a valid EVM address');
+      
+      await api('/api/wallets', { method: 'POST', body: { address, label } });
+      document.getElementById('input-address').value = '';
+      document.getElementById('input-label').value = '';
+      await loadWallets();
+      await loadStats();
+    }
+
+    async function removeWallet(id) {
+      await api(`/api/wallets/${id}`, { method: 'DELETE' });
+      await loadWallets();
+      await loadStats();
+    }
+
+    async function analyzeWallet(address) {
+      const el = document.getElementById('analysis-content');
+      el.innerHTML = '<div style="text-align:center;padding:20px;"><div class="spinner"></div><p style="margin-top:8px;font-size:12px;color:var(--dim);">Analyzing with MiMo AI...</p></div>';
+      
+      const data = await api(`/api/wallets/${address}/analyze`, { method: 'POST' });
+      renderAnalysis(data);
+      await loadWallets();
+      await loadAlerts();
+      await loadStats();
+    }
+
+    async function loadTransactions(address) {
+      const txs = await api(`/api/wallets/${address}/transactions?limit=8`);
+      const el = document.getElementById('tx-list');
+      document.getElementById('tx-wallet-label').textContent = `${address.slice(0,6)}...${address.slice(-4)}`;
+      
+      el.innerHTML = txs.map(tx => `
+        <div class="tx-item">
+          <div>
+            <span class="tx-method">${tx.method}</span>
+            <span class="tx-hash" style="margin-left:8px;">${tx.hash.slice(0,10)}...</span>
+          </div>
+          <div style="text-align:right;">
+            <div class="tx-value">${tx.value} ETH</div>
+            <div class="tx-time">${new Date(tx.timeStamp).toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function refreshAll() {
+      await Promise.all([loadStats(), loadWallets(), loadAlerts(), loadHealth()]);
+    }
+
+    // ── Init ──
+    refreshAll();
+    setInterval(refreshAll, 30000);
+  </script>
+</body>
+</html>
