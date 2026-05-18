@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiMo Wallet Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #1e1e2e;
+      --text: #e0e0e8;
+      --dim: #6b7280;
+      --accent: #6366f1;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --orange: #f97316;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, system-ui, sans-serif; min-height: 100vh; }
+    
+    .header { padding: 20px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .header h1 span { color: var(--accent); }
+    .header .badge { background: var(--accent); color: white; font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+    .header .ai-badge { background: #1a1a2e; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; padding: 3px 10px; border-radius: 12px; }
+    .header .links { display: flex; gap: 12px; align-items: center; }
+    .header .links a { color: var(--dim); text-decoration: none; font-size: 12px; transition: color 0.15s; }
+    .header .links a:hover { color: var(--accent); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .stat-card .label { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; }
+    .stat-card .sub { font-size: 12px; color: var(--dim); margin-top: 4px; }
+
+    .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .section-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .section-header h2 { font-size: 14px; font-weight: 600; }
+    .section-body { padding: 16px 20px; }
+
+    .add-form { display: flex; gap: 8px; margin-bottom: 16px; }
+    .add-form input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px; font-family: 'Fira Code', monospace; outline: none; }
+    .add-form input:focus { border-color: var(--accent); }
+    .add-form input::placeholder { color: var(--dim); }
+    .btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .btn:hover { background: #4f46e5; transform: translateY(-1px); }
+    .btn-sm { padding: 6px 12px; font-size: 11px; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--dim); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: var(--red); }
+    .btn-danger:hover { background: #dc2626; }
+
+    .wallet-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .wallet-item:last-child { border-bottom: none; }
+    .wallet-info { display: flex; align-items: center; gap: 12px; }
+    .wallet-avatar { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .wallet-name { font-size: 13px; font-weight: 600; }
+    .wallet-address { font-size: 11px; color: var(--dim); font-family: 'Fira Code', monospace; }
+    .wallet-actions { display: flex; gap: 6px; align-items: center; }
+
+    .risk { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .risk-LOW { background: rgba(34,197,94,0.15); color: var(--green); }
+    .risk-MEDIUM { background: rgba(234,179,8,0.15); color: var(--yellow); }
+    .risk-HIGH { background: rgba(249,115,22,0.15); color: var(--orange); }
+    .risk-CRITICAL { background: rgba(239,68,68,0.15); color: var(--red); }
+    .risk-UNKNOWN { background: rgba(107,114,128,0.15); color: var(--dim); }
+
+    .alert-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .alert-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .alert-dot.warning { background: var(--yellow); }
+    .alert-dot.info { background: var(--accent); }
+    .alert-dot.critical { background: var(--red); }
+    .alert-type { font-size: 11px; color: var(--dim); text-transform: uppercase; }
+    .alert-msg { font-size: 13px; }
+    .alert-time { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+    .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-method { background: rgba(99,102,241,0.1); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+    .tx-hash { font-family: 'Fira Code', monospace; color: var(--dim); }
+    .tx-value { font-weight: 600; }
+    .tx-time { color: var(--dim); font-size: 11px; }
+
+    .analysis-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+    .analysis-row .label { color: var(--dim); }
+    .analysis-list { margin-top: 8px; }
+    .analysis-list li { font-size: 12px; color: var(--dim); margin-left: 16px; margin-bottom: 4px; }
+
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty { text-align: center; padding: 40px 20px; color: var(--dim); }
+    .empty .icon { font-size: 32px; margin-bottom: 12px; }
+    .empty p { font-size: 13px; }
+
+    .hero { text-align: center; padding: 48px 24px; margin-bottom: 24px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1)); border: 1px solid var(--border); border-radius: 12px; }
+    .hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .hero p { color: var(--dim); font-size: 14px; max-width: 500px; margin: 0 auto 16px; }
+    .hero .cta { display: flex; gap: 12px; justify-content: center; }
+
+    .demo-banner { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: var(--yellow); text-align: center; }
+
+    @media (max-width: 768px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .grid { grid-template-columns: 1fr; }
+      .header { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🦊 <span>MiMo</span> Wallet Tracker</h1>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div class="ai-badge">Powered by MiMo V2.5</div>
+      <div class="links">
+        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank">GitHub</a>
+        <a href="https://platform.xiaomimimo.com" target="_blank">MiMo API</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <h2>AI-Powered Wallet Intelligence</h2>
+      <p>Monitor EVM wallets with real-time MiMo AI risk analysis. Detect suspicious patterns, track transactions, and get actionable security insights.</p>
+      <div class="cta">
+        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="btn">View on GitHub</a>
+        <button class="btn btn-outline" onclick="document.querySelector('.stats').scrollIntoView({behavior:'smooth'})">Try Demo ↓</button>
+      </div>
+    </div>
+
+    <div class="demo-banner">⚡ Demo Mode — Showing sample data. Deploy with your MiMo API key for live analysis.</div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">Tracked Wallets</div>
+        <div class="value" id="stat-wallets">3</div>
+        <div class="sub">Active monitoring</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Alerts</div>
+        <div class="value" id="stat-alerts">12</div>
+        <div class="sub">Last 24h</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Analyses Run</div>
+        <div class="value" id="stat-analyses">8</div>
+        <div class="sub">AI-powered</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">AI Engine</div>
+        <div class="value" style="color:var(--green);font-size:20px;">MiMo V2.5</div>
+        <div class="sub">Online</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="section">
+          <div class="section-header">
+            <h2>Tracked Wallets</h2>
+            <span style="font-size:11px;color:var(--dim);">Demo Data</span>
+          </div>
+          <div class="section-body">
+            <div class="add-form">
+              <input type="text" id="input-address" placeholder="0x... Ethereum address" />
+              <input type="text" id="input-label" placeholder="Label" style="max-width:120px;" />
+              <button class="btn" onclick="addWallet()">+ Add</button>
+            </div>
+            <div id="wallet-list"></div>
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:16px;">
+          <div class="section-header">
+            <h2>Recent Transactions</h2>
+            <span class="tx-time" id="tx-wallet-label">Ilyas Wallet</span>
+          </div>
+          <div class="section-body" id="tx-list"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section">
+          <div class="section-header">
+            <h2>Alerts</h2>
+          </div>
+          <div class="section-body" id="alert-list"></div>
+        </div>
+
+        <div class="section" style="margin-top:16px;">
+          <div class="section-header">
+            <h2>AI Analysis</h2>
+          </div>
+          <div class="section-body">
+            <div id="analysis-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Demo Data ──
+    const wallets = [
+      { id: '1', address: '0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label: 'Ilyas Wallet', riskLevel: 'MEDIUM' },
+      { id: '2', address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label: 'Vitalik', riskLevel: 'LOW' },
+      { id: '3', address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', label: 'UNI Treasury', riskLevel: 'LOW' }
+    ];
+
+    const transactions = [
+      { method: 'swap', hash: '0x8b68c9e3...', value: '1.245', time: '2h ago', status: 'success' },
+      { method: 'transfer', hash: '0xc2ef71bb...', value: '0.500', time: '4h ago', status: 'success' },
+      { method: 'approve', hash: '0x42c1bfe8...', value: '0.000', time: '6h ago', status: 'success' },
+      { method: 'mint', hash: '0x7428300d...', value: '0.050', time: '8h ago', status: 'success' },
+      { method: 'bridge', hash: '0x566caf37...', value: '2.100', time: '12h ago', status: 'success' },
+      { method: 'delegate', hash: '0x29ed1a38...', value: '0.000', time: '1d ago', status: 'failed' },
+      { method: 'stake', hash: '0x2b6ee273...', value: '3.500', time: '1d ago', status: 'success' },
+      { method: 'swap', hash: '0x64a84b76...', value: '0.750', time: '2d ago', status: 'success' }
+    ];
+
+    const alerts = [
+      { type: 'large_transfer', severity: 'warning', message: 'Large transfer: 3.500 ETH to 0x2f34...84d', time: '1d ago' },
+      { type: 'token_approval', severity: 'warning', message: 'Token approval: Unlimited USDC to 0xcf1c...73ec', time: '2d ago' },
+      { type: 'failed_tx', severity: 'info', message: 'Failed delegate transaction', time: '1d ago' },
+      { type: 'large_transfer', severity: 'warning', message: 'Large transfer: 2.100 ETH via bridge', time: '12h ago' },
+      { type: 'suspicious', severity: 'critical', message: 'Interaction with unverified contract', time: '3d ago' },
+      { type: 'large_transfer', severity: 'warning', message: 'Large transfer: 1.245 ETH via swap', time: '2h ago' }
+    ];
+
+    const analysis = {
+      risk_level: 'MEDIUM',
+      summary: 'Wallet shows regular DeFi activity with 1 failed transaction and multiple large transfers. Pattern suggests active trading/bridging behavior.',
+      patterns: ['1 failed delegate transaction', '6 large transfers (>1 ETH)', '2 token approvals detected', 'Cross-chain bridge usage'],
+      recommendations: ['Review unlimited token approvals', 'Set up alerts for transfers >2 ETH', 'Monitor bridge transactions for anomalies']
+    };
+
+    // ── Render ──
+    function renderWallets() {
+      document.getElementById('wallet-list').innerHTML = wallets.map(w => `
+        <div class="wallet-item">
+          <div class="wallet-info">
+            <div class="wallet-avatar">🦊</div>
+            <div>
+              <div class="wallet-name">${w.label}</div>
+              <div class="wallet-address">${w.address.slice(0,6)}...${w.address.slice(-4)}</div>
+            </div>
+          </div>
+          <div class="wallet-actions">
+            <span class="risk risk-${w.riskLevel}">${w.riskLevel}</span>
+            <button class="btn btn-sm btn-outline" onclick="showAnalysis('${w.label}')">Analyze</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderTransactions() {
+      document.getElementById('tx-list').innerHTML = transactions.map(tx => `
+        <div class="tx-item">
+          <div>
+            <span class="tx-method">${tx.method}</span>
+            <span class="tx-hash" style="margin-left:8px;">${tx.hash}</span>
+          </div>
+          <div style="text-align:right;">
+            <div class="tx-value">${tx.value} ETH</div>
+            <div class="tx-time">${tx.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAlerts() {
+      document.getElementById('alert-list').innerHTML = alerts.map(a => `
+        <div class="alert-item">
+          <div class="alert-header">
+            <div class="alert-dot ${a.severity}"></div>
+            <span class="alert-type">${a.type.replace(/_/g, ' ')}</span>
+          </div>
+          <div class="alert-msg">${a.message}</div>
+          <div class="alert-time">${a.time}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderAnalysis() {
+      document.getElementById('analysis-content').innerHTML = `
+        <div style="margin-bottom:12px;">
+          <div class="analysis-row">
+            <span class="label">Risk Level</span>
+            <span class="risk risk-${analysis.risk_level}">${analysis.risk_level}</span>
+          </div>
+          <div class="analysis-row">
+            <span class="label">Alerts</span>
+            <span>${alerts.length} detected</span>
+          </div>
+        </div>
+        <div style="font-size:13px;margin-bottom:12px;">${analysis.summary}</div>
+        <div class="analysis-list">
+          <div style="font-size:11px;color:var(--accent);margin-bottom:6px;">PATTERNS</div>
+          <ul>${analysis.patterns.map(p => `<li>${p}</li>`).join('')}</ul>
+        </div>
+        <div class="analysis-list" style="margin-top:12px;">
+          <div style="font-size:11px;color:var(--accent);margin-bottom:6px;">RECOMMENDATIONS</div>
+          <ul>${analysis.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+        </div>
+      `;
+    }
+
+    function addWallet() {
+      const addr = document.getElementById('input-address').value.trim();
+      const label = document.getElementById('input-label').value.trim();
+      if (!addr || !addr.startsWith('0x')) return alert('Enter a valid EVM address');
+      wallets.push({ id: Date.now().toString(), address: addr, label: label || `Wallet ${wallets.length + 1}`, riskLevel: 'UNKNOWN' });
+      document.getElementById('input-address').value = '';
+      document.getElementById('input-label').value = '';
+      renderWallets();
+      document.getElementById('stat-wallets').textContent = wallets.length;
+    }
+
+    function showAnalysis(name) {
+      document.getElementById('tx-wallet-label').textContent = name;
+      document.querySelector('.section:last-child').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Init
+    renderWallets();
+    renderTransactions();
+    renderAlerts();
+    renderAnalysis();
+  </script>
+</body>
+</html>
