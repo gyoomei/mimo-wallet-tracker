@@ -366,14 +366,15 @@
 
     async function fetchBalance(address, chain) {
       const data = await blockscoutGet(chain, `/addresses/${address}`);
-      if (!data) return { balance: '0', usd: 0 };
+      if (!data) return { balance: '0', usd: '0', has_txs: false };
       const bal = data.coin_balance ? (parseInt(data.coin_balance) / 1e18).toFixed(4) : '0';
       const rate = parseFloat(data.exchange_rate || '0');
-      return { balance: bal, usd: (parseFloat(bal) * rate).toFixed(2), rate };
+      const hasTxs = data.has_logs || data.has_token_transfers || data.has_tokens || parseFloat(bal) > 0;
+      return { balance: bal, usd: (parseFloat(bal) * rate).toFixed(2), rate, has_txs: hasTxs };
     }
 
-    async function fetchTransactions(address, chain, limit = 15) {
-      const data = await blockscoutGet(chain, `/addresses/${address}/transactions?limit=${limit}`);
+    async function fetchTransactions(address, chain) {
+      const data = await blockscoutGet(chain, `/addresses/${address}/transactions`);
       if (!data || !data.items) return [];
       return data.items.map(tx => ({
         hash: tx.hash,
@@ -391,7 +392,7 @@
     }
 
     async function fetchTokens(address, chain) {
-      const data = await blockscoutGet(chain, `/addresses/${address}/tokens?type=ERC-20`);
+      const data = await blockscoutGet(chain, `/addresses/${address}/tokens`);
       if (!data || !data.items) return [];
       return data.items.map(item => ({
         name: item.token?.name || 'Unknown',
@@ -403,8 +404,8 @@
       }));
     }
 
-    async function fetchTokenTransfers(address, chain, limit = 20) {
-      const data = await blockscoutGet(chain, `/addresses/${address}/token-transfers?limit=${limit}`);
+    async function fetchTokenTransfers(address, chain) {
+      const data = await blockscoutGet(chain, `/addresses/${address}/token-transfers`);
       if (!data || !data.items) return [];
       return data.items.map(tx => ({
         hash: tx.tx_hash,
@@ -526,6 +527,7 @@
             <button class="btn btn-xs btn-ghost" onclick="loadTxs('${w.id}')" title="Transactions">📋</button>
             <button class="btn btn-xs btn-ghost" onclick="loadTokens('${w.id}')" title="Token Holdings">💰</button>
             <button class="btn btn-xs btn-ghost" onclick="viewOnExplorer('${w.id}')" title="View on Explorer">🔗</button>
+            <button class="btn btn-xs btn-ghost" onclick="scanAllChains('${w.id}')" title="Scan All Chains">🌐</button>
             <button class="btn btn-xs btn-danger" onclick="remove('${w.id}')" title="Remove">✕</button>
           </div>
         </div>
@@ -639,21 +641,44 @@
       const addr = document.getElementById('input-address').value.trim();
       const label = document.getElementById('input-label').value.trim();
       if (!addr || !addr.startsWith('0x') || addr.length !== 42) { toast('Enter a valid 0x address (42 chars)', 'error'); return; }
-      if (wallets.find(w => w.address.toLowerCase() === addr.toLowerCase() && w.chain === currentChain)) { toast('Already tracked on this chain', 'error'); return; }
 
-      const w = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), address: addr, label: label || `Wallet ${wallets.length + 1}`, chain: currentChain, risk: 'UNKNOWN', balance: '...', usd: '0' };
-      wallets.push(w);
       document.getElementById('input-address').value = '';
       document.getElementById('input-label').value = '';
-      renderWallets();
-      toast('Fetching balance...', 'success');
+      const walletLabel = label || `Wallet ${wallets.length + 1}`;
+      toast('Scanning all chains...', 'success');
 
-      const result = await fetchBalance(addr, currentChain);
-      w.balance = result.balance;
-      w.usd = result.usd;
-      renderWallets();
+      // Scan all chains in parallel
+      const chainKeys = Object.keys(CHAINS);
+      let added = 0;
+      const scanPromises = chainKeys.map(async (chain) => {
+        // Skip if already tracked
+        if (wallets.find(w => w.address.toLowerCase() === addr.toLowerCase() && w.chain === chain)) return;
+        try {
+          const result = await fetchBalance(addr, chain);
+          const bal = parseFloat(result.balance);
+          const hasActivity = bal > 0 || result.has_txs;
+          // Add wallet if it has balance or is the selected chain
+          if (hasActivity || chain === currentChain) {
+            const w = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5) + chain, address: addr, label: walletLabel, chain, risk: 'UNKNOWN', balance: result.balance, usd: result.usd };
+            wallets.push(w);
+            added++;
+            renderWallets();
+          }
+        } catch (e) {
+          console.error(`Scan ${chain} failed:`, e);
+          // Still add for selected chain even if API fails
+          if (chain === currentChain && !wallets.find(w => w.address.toLowerCase() === addr.toLowerCase() && w.chain === chain)) {
+            const w = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5) + chain, address: addr, label: walletLabel, chain, risk: 'UNKNOWN', balance: '0', usd: '0' };
+            wallets.push(w);
+            added++;
+            renderWallets();
+          }
+        }
+      });
+
+      await Promise.all(scanPromises);
       saveWallets();
-      toast(`Balance: ${result.balance} ${CHAINS[currentChain].symbol}`, 'success');
+      toast(`Found on ${added} chain${added !== 1 ? 's' : ''}!`, 'success');
     }
 
     function remove(id) {
@@ -674,7 +699,7 @@
       if (!w) return;
       document.getElementById('analysis-content').innerHTML = '<div class="loading"><div class="spinner"></div> Fetching & analyzing transactions...</div>';
 
-      const txs = await fetchTransactions(w.address, w.chain, 25);
+      const txs = await fetchTransactions(w.address, w.chain);
       if (!txs.length) { document.getElementById('analysis-content').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>No transactions found for this address</p></div>'; return; }
 
       const a = analyzeTransactions(w.address, txs);
@@ -691,7 +716,7 @@
       const w = wallets.find(x => x.id === id);
       if (!w) return;
       document.getElementById('tx-list').innerHTML = '<div class="loading"><div class="spinner"></div> Fetching transactions...</div>';
-      const txs = await fetchTransactions(w.address, w.chain, 20);
+      const txs = await fetchTransactions(w.address, w.chain);
       renderTxs(txs, `${w.label} (${w.chain.toUpperCase()})`);
     }
 
@@ -745,6 +770,43 @@
       el._t = setTimeout(() => el.classList.remove('show'), 2500);
     }
 
+    // ── Scan all chains for a wallet ──
+    async function scanAllChains(id) {
+      const w = wallets.find(x => x.id === id);
+      if (!w) return;
+      toast(`Scanning ${w.label} on all chains...`, 'success');
+      const chainKeys = Object.keys(CHAINS);
+      let found = 0;
+
+      for (const chain of chainKeys) {
+        // Skip if already tracked
+        if (wallets.find(x => x.address.toLowerCase() === w.address.toLowerCase() && x.chain === chain)) {
+          // Just refresh existing
+          const existing = wallets.find(x => x.address.toLowerCase() === w.address.toLowerCase() && x.chain === chain);
+          const result = await fetchBalance(existing.address, existing.chain);
+          existing.balance = result.balance;
+          existing.usd = result.usd;
+          renderWallets();
+          continue;
+        }
+        try {
+          const result = await fetchBalance(w.address, chain);
+          const bal = parseFloat(result.balance);
+          if (bal > 0 || result.has_txs) {
+            wallets.push({
+              id: Date.now().toString(36) + Math.random().toString(36).slice(2,5) + chain,
+              address: w.address, label: w.label, chain,
+              risk: 'UNKNOWN', balance: result.balance, usd: result.usd
+            });
+            found++;
+            renderWallets();
+          }
+        } catch (e) { console.error(`Scan ${chain}:`, e); }
+      }
+      saveWallets();
+      toast(`Found on ${found} new chain${found !== 1 ? 's' : ''}!`, 'success');
+    }
+
     // ── Init ──
     async function init() {
       fetchEthPrice();
@@ -760,26 +822,25 @@
       renderAlerts();
       document.getElementById('stat-analyses').textContent = analysisCount;
 
-      // Fetch balances for all wallets
-      for (const w of wallets) {
+      // Fetch balances for all wallets in parallel
+      await Promise.all(wallets.map(async (w) => {
         const result = await fetchBalance(w.address, w.chain);
         w.balance = result.balance;
         w.usd = result.usd;
         renderWallets();
-      }
+      }));
       saveWallets();
     }
     init();
 
     // Auto-refresh every 60s
-    setInterval(() => {
-      for (const w of wallets) {
-        fetchBalance(w.address, w.chain).then(result => {
-          w.balance = result.balance;
-          w.usd = result.usd;
-          renderWallets();
-        });
-      }
+    setInterval(async () => {
+      await Promise.all(wallets.map(async (w) => {
+        const result = await fetchBalance(w.address, w.chain);
+        w.balance = result.balance;
+        w.usd = result.usd;
+      }));
+      renderWallets();
       fetchEthPrice();
     }, 60000);
   </script>
