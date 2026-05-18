@@ -470,10 +470,11 @@
       if (!recs.length) recs.push('No immediate action needed');
 
       const vol = txs.reduce((s, t) => s + parseFloat(t.value), 0).toFixed(4);
-      const nativeSymbol = CHAINS[currentChain].symbol;
+      const nativeSymbol = CHAINS[txs[0]?.chain || currentChain]?.symbol || 'ETH';
 
       return {
         risk_level: level, risk_score: risk,
+        chain: txs[0]?.chain || currentChain,
         summary: `${txs.length} txs analyzed · ${incoming} in / ${outgoing} out · ${vol} ${nativeSymbol} volume · ${failed} failures`,
         patterns, recommendations: recs,
         stats: { failed, large, approvals, swaps, mints, outgoing, incoming, uniqueContracts, volume: vol }
@@ -628,7 +629,7 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
             <div style="color:var(--dim);">Incoming: <span style="color:var(--green);">${a.stats.incoming}</span></div>
             <div style="color:var(--dim);">Outgoing: <span style="color:var(--red);">${a.stats.outgoing}</span></div>
-            <div style="color:var(--dim);">Volume: <span style="color:var(--text);">${a.stats.volume} ${CHAINS[currentChain].symbol}</span></div>
+            <div style="color:var(--dim);">Volume: <span style="color:var(--text);">${a.stats.volume} ${CHAINS[a.chain]?.symbol || 'ETH'}</span></div>
             <div style="color:var(--dim);">Contracts: <span style="color:var(--text);">${a.stats.uniqueContracts}</span></div>
           </div>
         </div>` : ''}
