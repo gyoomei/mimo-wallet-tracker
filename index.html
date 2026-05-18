@@ -71,7 +71,7 @@
     .add-form input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-size: 13px; font-family: 'JetBrains Mono', monospace; outline: none; transition: all 0.2s; min-width: 0; }
     .add-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
     .add-form input::placeholder { color: var(--dim); font-family: 'Inter', sans-serif; }
-    .chain-select { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .chain-select { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; max-height: 80px; overflow-y: auto; padding-bottom: 4px; }
     .chain-btn { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--dim); transition: all 0.2s; font-family: inherit; }
     .chain-btn:hover { border-color: var(--border-hover); color: var(--text); }
     .chain-btn.active { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); color: var(--accent); }
@@ -220,11 +220,24 @@
           </div>
           <div class="section-body">
             <div class="chain-select" id="chain-tabs">
-              <button class="chain-btn active" data-chain="eth" onclick="setChain('eth')">Ξ Ethereum</button>
-              <button class="chain-btn" data-chain="bsc" onclick="setChain('bsc')">◆ BSC</button>
-              <button class="chain-btn" data-chain="polygon" onclick="setChain('polygon')">⬡ Polygon</button>
+              <button class="chain-btn active" data-chain="eth" onclick="setChain('eth')">Ξ ETH</button>
               <button class="chain-btn" data-chain="base" onclick="setChain('base')">🔵 Base</button>
-              <button class="chain-btn" data-chain="arbitrum" onclick="setChain('arbitrum')">🔺 Arbitrum</button>
+              <button class="chain-btn" data-chain="arbitrum" onclick="setChain('arbitrum')">🔺 Arb</button>
+              <button class="chain-btn" data-chain="optimism" onclick="setChain('optimism')">🔴 OP</button>
+              <button class="chain-btn" data-chain="polygon" onclick="setChain('polygon')">⬡ Polygon</button>
+              <button class="chain-btn" data-chain="bsc" onclick="setChain('bsc')">◆ BSC</button>
+              <button class="chain-btn" data-chain="zksync" onclick="setChain('zksync')"> zkSync</button>
+              <button class="chain-btn" data-chain="scroll" onclick="setChain('scroll')">📜 Scroll</button>
+              <button class="chain-btn" data-chain="gnosis" onclick="setChain('gnosis')">🟢 Gnosis</button>
+              <button class="chain-btn" data-chain="celo" onclick="setChain('celo')">🟡 Celo</button>
+              <button class="chain-btn" data-chain="filecoin" onclick="setChain('filecoin')">💾 FIL</button>
+              <button class="chain-btn" data-chain="mode" onclick="setChain('mode')">📡 Mode</button>
+              <button class="chain-btn" data-chain="zora" onclick="setChain('zora')">🎨 Zora</button>
+              <button class="chain-btn" data-chain="unichain" onclick="setChain('unichain')">🦄 Uni</button>
+              <button class="chain-btn" data-chain="soneium" onclick="setChain('soneium')">☀️ Soneium</button>
+              <button class="chain-btn" data-chain="redstone" onclick="setChain('redstone')">🪨 Redstone</button>
+              <button class="chain-btn" data-chain="arbitrum_nova" onclick="setChain('arbitrum_nova')">🔺 Nova</button>
+              <button class="chain-btn" data-chain="degen" onclick="setChain('degen')">🐸 Degen</button>
             </div>
             <div class="add-form">
               <input type="text" id="input-address" placeholder="0x... wallet address" />
@@ -309,13 +322,26 @@
     let currentChain = 'eth';
     let ethPrice = 0;
 
-    // ── Chain Config (Blockscout — free, no API key) ──
+    // ── Chain Config (Blockscout — free, no API key, 17 EVM chains) ──
     const CHAINS = {
-      eth:      { name: 'Ethereum', base: 'https://eth.blockscout.com',        symbol: 'ETH',  explorer: 'https://etherscan.io',       color: '#627eea' },
-      bsc:      { name: 'BSC',      base: 'https://bsc.blockscout.com',        symbol: 'BNB',  explorer: 'https://bscscan.com',        color: '#f0b90b' },
-      polygon:  { name: 'Polygon',  base: 'https://polygon.blockscout.com',    symbol: 'POL',  explorer: 'https://polygonscan.com',    color: '#8247e5' },
-      base:     { name: 'Base',     base: 'https://base.blockscout.com',       symbol: 'ETH',  explorer: 'https://basescan.org',       color: '#0052ff' },
-      arbitrum: { name: 'Arbitrum', base: 'https://arbitrum.blockscout.com',   symbol: 'ETH',  explorer: 'https://arbiscan.io',        color: '#28a0f0' },
+      eth:        { name: 'Ethereum',       base: 'https://eth.blockscout.com',        symbol: 'ETH',   explorer: 'https://etherscan.io',          color: '#627eea', cat: 'L1' },
+      bsc:        { name: 'BSC',            base: 'https://bsc.blockscout.com',        symbol: 'BNB',   explorer: 'https://bscscan.com',           color: '#f0b90b', cat: 'L1' },
+      polygon:    { name: 'Polygon',        base: 'https://polygon.blockscout.com',    symbol: 'POL',   explorer: 'https://polygonscan.com',       color: '#8247e5', cat: 'L2' },
+      base:       { name: 'Base',           base: 'https://base.blockscout.com',       symbol: 'ETH',   explorer: 'https://basescan.org',          color: '#0052ff', cat: 'L2' },
+      arbitrum:   { name: 'Arbitrum',       base: 'https://arbitrum.blockscout.com',   symbol: 'ETH',   explorer: 'https://arbiscan.io',           color: '#28a0f0', cat: 'L2' },
+      optimism:   { name: 'Optimism',       base: 'https://optimism.blockscout.com',   symbol: 'ETH',   explorer: 'https://optimistic.etherscan.io', color: '#ff0420', cat: 'L2' },
+      gnosis:     { name: 'Gnosis',         base: 'https://gnosis.blockscout.com',     symbol: 'xDAI',  explorer: 'https://gnosisscan.io',         color: '#04795b', cat: 'L1' },
+      zksync:     { name: 'zkSync Era',     base: 'https://zksync.blockscout.com',     symbol: 'ETH',   explorer: 'https://explorer.zksync.io',    color: '#4e529a', cat: 'L2' },
+      scroll:     { name: 'Scroll',         base: 'https://scrollscan.com',            symbol: 'ETH',   explorer: 'https://scrollscan.com',        color: '#ffdbb0', cat: 'L2' },
+      celo:       { name: 'Celo',           base: 'https://celo.blockscout.com',       symbol: 'CELO',  explorer: 'https://celoscan.io',           color: '#fcff52', cat: 'L1' },
+      arbitrum_nova: { name: 'Arb Nova',    base: 'https://arbitrum-nova.blockscout.com', symbol: 'ETH', explorer: 'https://nova.arbiscan.io',    color: '#28a0f0', cat: 'L2' },
+      filecoin:   { name: 'Filecoin',       base: 'https://filecoin.blockscout.com',   symbol: 'FIL',   explorer: 'https://filfox.info',           color: '#0090ff', cat: 'L1' },
+      mode:       { name: 'Mode',           base: 'https://explorer.mode.network',     symbol: 'ETH',   explorer: 'https://explorer.mode.network', color: '#dffe00', cat: 'L2' },
+      zora:       { name: 'Zora',           base: 'https://explorer.zora.energy',      symbol: 'ETH',   explorer: 'https://explorer.zora.energy',  color: '#50f',    cat: 'L2' },
+      unichain:   { name: 'Unichain',       base: 'https://unichain.blockscout.com',   symbol: 'ETH',   explorer: 'https://unichain.blockscout.com', color: '#ff0054', cat: 'L2' },
+      soneium:    { name: 'Soneium',        base: 'https://soneium.blockscout.com',    symbol: 'ETH',   explorer: 'https://soneium.blockscout.com', color: '#1e90ff', cat: 'L2' },
+      redstone:   { name: 'Redstone',       base: 'https://explorer.redstone.xyz',     symbol: 'ETH',   explorer: 'https://explorer.redstone.xyz', color: '#ff6600', cat: 'L2' },
+      degen:      { name: 'Degen',          base: 'https://explorer.degen.tips',       symbol: 'DEGEN', explorer: 'https://explorer.degen.tips',   color: '#a3e635', cat: 'L3' },
     };
 
     function setChain(chain) {
