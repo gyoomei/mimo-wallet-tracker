@@ -4,337 +4,902 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MiMo Wallet Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #0a0a0f;
-      --card: #12121a;
-      --border: #1e1e2e;
-      --text: #e0e0e8;
+      --bg: #06060b;
+      --bg2: #0c0c14;
+      --card: rgba(16,16,24,0.8);
+      --card-hover: rgba(20,20,30,0.9);
+      --border: rgba(255,255,255,0.06);
+      --border-hover: rgba(99,102,241,0.3);
+      --text: #e8e8f0;
       --dim: #6b7280;
       --accent: #6366f1;
+      --accent2: #a855f7;
       --green: #22c55e;
       --yellow: #eab308;
       --red: #ef4444;
       --orange: #f97316;
     }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, system-ui, sans-serif; min-height: 100vh; }
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      font-family: 'Inter', -apple-system, system-ui, sans-serif; 
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 60%, rgba(168,85,247,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header */
+    .header { 
+      padding: 16px 32px; 
+      border-bottom: 1px solid var(--border); 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      backdrop-filter: blur(20px);
+      background: rgba(6,6,11,0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .header h1 .logo { 
+      width: 32px; height: 32px; 
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .badge { 
+      background: rgba(99,102,241,0.15); 
+      border: 1px solid rgba(99,102,241,0.3);
+      color: var(--accent); 
+      font-size: 11px; 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-weight: 500;
+    }
+    .badge.live::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
     
-    .header { padding: 20px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-    .header h1 span { color: var(--accent); }
-    .header .badge { background: var(--accent); color: white; font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
-    .header .ai-badge { background: #1a1a2e; border: 1px solid var(--accent); color: var(--accent); font-size: 11px; padding: 3px 10px; border-radius: 12px; }
-    .header .links { display: flex; gap: 12px; align-items: center; }
-    .header .links a { color: var(--dim); text-decoration: none; font-size: 12px; transition: color 0.15s; }
-    .header .links a:hover { color: var(--accent); }
+    .link-btn {
+      color: var(--dim);
+      text-decoration: none;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .link-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 24px; }
 
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-    .stat-card .label { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .stat-card .value { font-size: 28px; font-weight: 700; }
-    .stat-card .sub { font-size: 12px; color: var(--dim); margin-top: 4px; }
+    /* Hero */
+    .hero { 
+      text-align: center; 
+      padding: 60px 24px 48px; 
+      margin-bottom: 32px;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero .tag { 
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.2);
+      color: var(--accent);
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .hero h2 { 
+      font-size: clamp(28px,5vw,42px); 
+      font-weight: 800; 
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+    .hero p { color: var(--dim); font-size: 15px; max-width: 480px; margin: 0 auto 24px; line-height: 1.6; }
+    .hero .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-    .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+    /* Buttons */
+    .btn { 
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white; 
+      border: none; 
+      border-radius: 10px; 
+      padding: 12px 24px; 
+      font-size: 13px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.3); }
+    .btn:active { transform: translateY(0); }
+    .btn-ghost { 
+      background: transparent; 
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-ghost:hover { border-color: var(--border-hover); background: rgba(99,102,241,0.05); }
+    .btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 8px; }
+    .btn-xs { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
+    .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-danger:hover { background: rgba(239,68,68,0.25); box-shadow: none; transform: none; }
 
-    .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .section-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .section-header h2 { font-size: 14px; font-weight: 600; }
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { 
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border); 
+      border-radius: 14px; 
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    .stat-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+    .stat-card .icon-wrap {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .stat-card .label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-weight: 500; }
+    .stat-card .value { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .stat-card .sub { font-size: 11px; color: var(--dim); margin-top: 4px; }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+
+    /* Sections */
+    .section { 
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border); 
+      border-radius: 14px; 
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .section:hover { border-color: var(--border-hover); }
+    .section-header { 
+      padding: 14px 20px; 
+      border-bottom: 1px solid var(--border); 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+    }
+    .section-header h2 { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .section-header h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
     .section-body { padding: 16px 20px; }
 
+    /* Form */
     .add-form { display: flex; gap: 8px; margin-bottom: 16px; }
-    .add-form input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px; font-family: 'Fira Code', monospace; outline: none; }
-    .add-form input:focus { border-color: var(--accent); }
+    .add-form input { 
+      flex: 1; 
+      background: rgba(0,0,0,0.3); 
+      border: 1px solid var(--border); 
+      border-radius: 10px; 
+      padding: 11px 14px; 
+      color: var(--text); 
+      font-size: 13px; 
+      font-family: 'JetBrains Mono', monospace; 
+      outline: none;
+      transition: all 0.2s;
+    }
+    .add-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
     .add-form input::placeholder { color: var(--dim); }
-    .btn { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .btn:hover { background: #4f46e5; transform: translateY(-1px); }
-    .btn-sm { padding: 6px 12px; font-size: 11px; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--dim); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-danger { background: var(--red); }
-    .btn-danger:hover { background: #dc2626; }
 
-    .wallet-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    /* Wallet Items */
+    .wallet-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 14px 0; 
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s;
+    }
     .wallet-item:last-child { border-bottom: none; }
-    .wallet-info { display: flex; align-items: center; gap: 12px; }
-    .wallet-avatar { width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 16px; }
-    .wallet-name { font-size: 13px; font-weight: 600; }
-    .wallet-address { font-size: 11px; color: var(--dim); font-family: 'Fira Code', monospace; }
+    .wallet-item:hover { padding-left: 4px; }
+    .wallet-info { display: flex; align-items: center; gap: 14px; }
+    .wallet-avatar { 
+      width: 40px; height: 40px; 
+      border-radius: 10px; 
+      display: flex; align-items: center; justify-content: center; 
+      font-size: 18px;
+      position: relative;
+    }
+    .wallet-avatar::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      z-index: -1;
+      opacity: 0.3;
+    }
+    .wallet-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .wallet-address { 
+      font-size: 11px; 
+      color: var(--dim); 
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .wallet-address:hover { color: var(--accent); }
     .wallet-actions { display: flex; gap: 6px; align-items: center; }
 
-    .risk { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-    .risk-LOW { background: rgba(34,197,94,0.15); color: var(--green); }
-    .risk-MEDIUM { background: rgba(234,179,8,0.15); color: var(--yellow); }
-    .risk-HIGH { background: rgba(249,115,22,0.15); color: var(--orange); }
-    .risk-CRITICAL { background: rgba(239,68,68,0.15); color: var(--red); }
-    .risk-UNKNOWN { background: rgba(107,114,128,0.15); color: var(--dim); }
+    /* Risk Badge */
+    .risk { 
+      padding: 4px 10px; 
+      border-radius: 6px; 
+      font-size: 10px; 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: 0.06em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .risk::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+    .risk-LOW { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .risk-LOW::before { background: var(--green); }
+    .risk-MEDIUM { background: rgba(234,179,8,0.12); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
+    .risk-MEDIUM::before { background: var(--yellow); }
+    .risk-HIGH { background: rgba(249,115,22,0.12); color: var(--orange); border: 1px solid rgba(249,115,22,0.2); }
+    .risk-HIGH::before { background: var(--orange); }
+    .risk-CRITICAL { background: rgba(239,68,68,0.12); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+    .risk-CRITICAL::before { background: var(--red); }
+    .risk-UNKNOWN { background: rgba(107,114,128,0.12); color: var(--dim); border: 1px solid rgba(107,114,128,0.2); }
+    .risk-UNKNOWN::before { background: var(--dim); }
 
-    .alert-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    /* Alerts */
+    .alert-item { 
+      padding: 12px 0; 
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s;
+    }
     .alert-item:last-child { border-bottom: none; }
-    .alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .alert-dot { width: 6px; height: 6px; border-radius: 50%; }
-    .alert-dot.warning { background: var(--yellow); }
-    .alert-dot.info { background: var(--accent); }
-    .alert-dot.critical { background: var(--red); }
-    .alert-type { font-size: 11px; color: var(--dim); text-transform: uppercase; }
-    .alert-msg { font-size: 13px; }
-    .alert-time { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .alert-item:hover { padding-left: 4px; }
+    .alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .alert-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .alert-dot.warning { background: var(--yellow); box-shadow: 0 0 8px rgba(234,179,8,0.4); }
+    .alert-dot.info { background: var(--accent); box-shadow: 0 0 8px rgba(99,102,241,0.4); }
+    .alert-dot.critical { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.4); animation: pulse 1.5s infinite; }
+    .alert-type { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+    .alert-msg { font-size: 13px; line-height: 1.4; }
+    .alert-time { font-size: 11px; color: var(--dim); margin-top: 4px; }
 
-    .tx-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    /* Transactions */
+    .tx-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 10px 0; 
+      border-bottom: 1px solid var(--border); 
+      font-size: 12px;
+      transition: all 0.2s;
+    }
     .tx-item:last-child { border-bottom: none; }
-    .tx-method { background: rgba(99,102,241,0.1); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
-    .tx-hash { font-family: 'Fira Code', monospace; color: var(--dim); }
-    .tx-value { font-weight: 600; }
-    .tx-time { color: var(--dim); font-size: 11px; }
+    .tx-item:hover { padding-left: 4px; }
+    .tx-left { display: flex; align-items: center; gap: 10px; }
+    .tx-method { 
+      background: rgba(99,102,241,0.1); 
+      color: var(--accent); 
+      padding: 3px 8px; 
+      border-radius: 5px; 
+      font-size: 10px; 
+      font-weight: 600; 
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tx-hash { font-family: 'JetBrains Mono', monospace; color: var(--dim); font-size: 11px; }
+    .tx-right { text-align: right; }
+    .tx-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .tx-time { color: var(--dim); font-size: 11px; margin-top: 2px; }
+    .tx-status { 
+      display: inline-block;
+      width: 6px; height: 6px; 
+      border-radius: 50%; 
+      margin-left: 6px;
+    }
+    .tx-status.success { background: var(--green); }
+    .tx-status.failed { background: var(--red); }
 
-    .analysis-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
-    .analysis-row .label { color: var(--dim); }
-    .analysis-list { margin-top: 8px; }
-    .analysis-list li { font-size: 12px; color: var(--dim); margin-left: 16px; margin-bottom: 4px; }
+    /* Analysis */
+    .analysis-block { margin-bottom: 16px; }
+    .analysis-label { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 8px; }
+    .analysis-summary { font-size: 13px; line-height: 1.6; color: var(--dim); margin-bottom: 12px; }
+    .analysis-list { list-style: none; }
+    .analysis-list li { 
+      font-size: 12px; 
+      color: var(--dim); 
+      padding: 6px 0; 
+      padding-left: 16px; 
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .analysis-list li:last-child { border-bottom: none; }
+    .analysis-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
 
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    /* Empty State */
+    .empty { text-align: center; padding: 40px 20px; color: var(--dim); }
+    .empty .icon { font-size: 36px; margin-bottom: 12px; opacity: 0.6; }
+    .empty p { font-size: 13px; line-height: 1.5; }
+
+    /* Loading */
+    .loading { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 20px; color: var(--dim); font-size: 12px; }
+    .spinner { 
+      width: 16px; height: 16px; 
+      border: 2px solid var(--border); 
+      border-top-color: var(--accent); 
+      border-radius: 50%; 
+      animation: spin 0.7s linear infinite; 
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .empty { text-align: center; padding: 40px 20px; color: var(--dim); }
-    .empty .icon { font-size: 32px; margin-bottom: 12px; }
-    .empty p { font-size: 13px; }
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(12px);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.3); }
+    .toast.error { border-color: rgba(239,68,68,0.3); }
 
-    .hero { text-align: center; padding: 48px 24px; margin-bottom: 24px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1)); border: 1px solid var(--border); border-radius: 12px; }
-    .hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .hero p { color: var(--dim); font-size: 14px; max-width: 500px; margin: 0 auto 16px; }
-    .hero .cta { display: flex; gap: 12px; justify-content: center; }
-
-    .demo-banner { background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 12px; color: var(--yellow); text-align: center; }
-
-    @media (max-width: 768px) {
+    /* Responsive */
+    @media (max-width: 900px) {
       .stats { grid-template-columns: repeat(2, 1fr); }
       .grid { grid-template-columns: 1fr; }
-      .header { flex-direction: column; gap: 12px; }
+      .header { padding: 12px 16px; }
+      .container { padding: 16px; }
+    }
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr; }
+      .add-form { flex-direction: column; }
+      .add-form input:last-of-type { max-width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>🦊 <span>MiMo</span> Wallet Tracker</h1>
-    <div style="display:flex;gap:12px;align-items:center;">
-      <div class="ai-badge">Powered by MiMo V2.5</div>
-      <div class="links">
-        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank">GitHub</a>
-        <a href="https://platform.xiaomimimo.com" target="_blank">MiMo API</a>
-      </div>
+    <h1>
+      <div class="logo">🦊</div>
+      MiMo Wallet Tracker
+    </h1>
+    <div class="header-right">
+      <div class="badge">Powered by MiMo V2.5</div>
+      <div class="badge live">Live</div>
+      <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="link-btn">GitHub</a>
     </div>
   </div>
 
   <div class="container">
+    <!-- Hero -->
     <div class="hero">
-      <h2>AI-Powered Wallet Intelligence</h2>
-      <p>Monitor EVM wallets with real-time MiMo AI risk analysis. Detect suspicious patterns, track transactions, and get actionable security insights.</p>
-      <div class="cta">
-        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="btn">View on GitHub</a>
-        <button class="btn btn-outline" onclick="document.querySelector('.stats').scrollIntoView({behavior:'smooth'})">Try Demo ↓</button>
+      <div class="tag">🛡️ Blockchain Security Intelligence</div>
+      <h2>AI-Powered Wallet<br>Monitoring</h2>
+      <p>Track EVM wallets in real-time. MiMo AI analyzes transaction patterns, detects threats, and delivers actionable security insights.</p>
+      <div class="actions">
+        <button class="btn" onclick="document.getElementById('wallets').scrollIntoView({behavior:'smooth'})">
+          <span>🚀</span> Try Demo
+        </button>
+        <a href="https://github.com/gyoomei/mimo-wallet-tracker" target="_blank" class="btn btn-ghost">
+          <span>⭐</span> View Source
+        </a>
       </div>
     </div>
 
-    <div class="demo-banner">⚡ Demo Mode — Showing sample data. Deploy with your MiMo API key for live analysis.</div>
-
+    <!-- Stats -->
     <div class="stats">
       <div class="stat-card">
-        <div class="label">Tracked Wallets</div>
-        <div class="value" id="stat-wallets">3</div>
-        <div class="sub">Active monitoring</div>
+        <div class="icon-wrap" style="background:rgba(99,102,241,0.1)">🦊</div>
+        <div class="label">Wallets</div>
+        <div class="value" id="stat-wallets">0</div>
+        <div class="sub">Tracked addresses</div>
       </div>
       <div class="stat-card">
-        <div class="label">Total Alerts</div>
-        <div class="value" id="stat-alerts">12</div>
-        <div class="sub">Last 24h</div>
+        <div class="icon-wrap" style="background:rgba(234,179,8,0.1)">🔔</div>
+        <div class="label">Alerts</div>
+        <div class="value" id="stat-alerts">0</div>
+        <div class="sub">Active warnings</div>
       </div>
       <div class="stat-card">
-        <div class="label">Analyses Run</div>
-        <div class="value" id="stat-analyses">8</div>
-        <div class="sub">AI-powered</div>
+        <div class="icon-wrap" style="background:rgba(34,197,94,0.1)">🧠</div>
+        <div class="label">Analyses</div>
+        <div class="value" id="stat-analyses">0</div>
+        <div class="sub">AI-powered scans</div>
       </div>
       <div class="stat-card">
-        <div class="label">AI Engine</div>
-        <div class="value" style="color:var(--green);font-size:20px;">MiMo V2.5</div>
+        <div class="icon-wrap" style="background:rgba(168,85,247,0.1)">⛓️</div>
+        <div class="label">Engine</div>
+        <div class="value" style="font-size:16px;color:var(--green);">MiMo V2.5</div>
         <div class="sub">Online</div>
       </div>
     </div>
 
+    <!-- Main Grid -->
     <div class="grid">
       <div>
-        <div class="section">
+        <!-- Wallets -->
+        <div class="section" id="wallets">
           <div class="section-header">
-            <h2>Tracked Wallets</h2>
-            <span style="font-size:11px;color:var(--dim);">Demo Data</span>
+            <h2><span class="dot"></span> Tracked Wallets</h2>
+            <button class="btn btn-xs btn-ghost" onclick="refreshAll()">↻ Refresh</button>
           </div>
           <div class="section-body">
             <div class="add-form">
               <input type="text" id="input-address" placeholder="0x... Ethereum address" />
-              <input type="text" id="input-label" placeholder="Label" style="max-width:120px;" />
-              <button class="btn" onclick="addWallet()">+ Add</button>
+              <input type="text" id="input-label" placeholder="Label (optional)" style="max-width:160px;" />
+              <button class="btn btn-sm" onclick="addWallet()">+ Add</button>
             </div>
-            <div id="wallet-list"></div>
+            <div id="wallet-list">
+              <div class="loading"><div class="spinner"></div> Loading wallets...</div>
+            </div>
           </div>
         </div>
 
+        <!-- Transactions -->
         <div class="section" style="margin-top:16px;">
           <div class="section-header">
-            <h2>Recent Transactions</h2>
-            <span class="tx-time" id="tx-wallet-label">Ilyas Wallet</span>
+            <h2><span class="dot"></span> Recent Transactions</h2>
+            <span id="tx-wallet-label" style="font-size:11px;color:var(--dim);">Select a wallet</span>
           </div>
-          <div class="section-body" id="tx-list"></div>
+          <div class="section-body" id="tx-list">
+            <div class="empty">
+              <div class="icon">📋</div>
+              <p>Click "Txs" on a wallet to view transactions</p>
+            </div>
+          </div>
         </div>
       </div>
 
       <div>
+        <!-- Alerts -->
         <div class="section">
           <div class="section-header">
-            <h2>Alerts</h2>
+            <h2><span class="dot" style="background:var(--yellow)"></span> Alerts</h2>
+            <span id="alert-count" style="font-size:11px;color:var(--dim);">0 active</span>
           </div>
-          <div class="section-body" id="alert-list"></div>
+          <div class="section-body" id="alert-list">
+            <div class="empty">
+              <div class="icon">🔔</div>
+              <p>No alerts yet. Add a wallet and analyze it.</p>
+            </div>
+          </div>
         </div>
 
+        <!-- Analysis -->
         <div class="section" style="margin-top:16px;">
           <div class="section-header">
-            <h2>AI Analysis</h2>
+            <h2><span class="dot" style="background:var(--accent2)"></span> AI Analysis</h2>
           </div>
           <div class="section-body">
-            <div id="analysis-content"></div>
+            <div id="analysis-content">
+              <div class="empty">
+                <div class="icon">🧠</div>
+                <p>Select a wallet and click "Analyze" to get AI-powered risk assessment</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
   <script>
-    // ── Demo Data ──
-    const wallets = [
-      { id: '1', address: '0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label: 'Ilyas Wallet', riskLevel: 'MEDIUM' },
-      { id: '2', address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label: 'Vitalik', riskLevel: 'LOW' },
-      { id: '3', address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', label: 'UNI Treasury', riskLevel: 'LOW' }
-    ];
+    // ── State ──
+    let wallets = [];
+    let allAlerts = [];
+    let analysisCount = 0;
 
-    const transactions = [
-      { method: 'swap', hash: '0x8b68c9e3...', value: '1.245', time: '2h ago', status: 'success' },
-      { method: 'transfer', hash: '0xc2ef71bb...', value: '0.500', time: '4h ago', status: 'success' },
-      { method: 'approve', hash: '0x42c1bfe8...', value: '0.000', time: '6h ago', status: 'success' },
-      { method: 'mint', hash: '0x7428300d...', value: '0.050', time: '8h ago', status: 'success' },
-      { method: 'bridge', hash: '0x566caf37...', value: '2.100', time: '12h ago', status: 'success' },
-      { method: 'delegate', hash: '0x29ed1a38...', value: '0.000', time: '1d ago', status: 'failed' },
-      { method: 'stake', hash: '0x2b6ee273...', value: '3.500', time: '1d ago', status: 'success' },
-      { method: 'swap', hash: '0x64a84b76...', value: '0.750', time: '2d ago', status: 'success' }
-    ];
+    // ── Etherscan API (free tier, no key needed for demo) ──
+    const ETHERSCAN_API = 'https://api.etherscan.io/api';
 
-    const alerts = [
-      { type: 'large_transfer', severity: 'warning', message: 'Large transfer: 3.500 ETH to 0x2f34...84d', time: '1d ago' },
-      { type: 'token_approval', severity: 'warning', message: 'Token approval: Unlimited USDC to 0xcf1c...73ec', time: '2d ago' },
-      { type: 'failed_tx', severity: 'info', message: 'Failed delegate transaction', time: '1d ago' },
-      { type: 'large_transfer', severity: 'warning', message: 'Large transfer: 2.100 ETH via bridge', time: '12h ago' },
-      { type: 'suspicious', severity: 'critical', message: 'Interaction with unverified contract', time: '3d ago' },
-      { type: 'large_transfer', severity: 'warning', message: 'Large transfer: 1.245 ETH via swap', time: '2h ago' }
-    ];
+    async function fetchRealTransactions(address, limit = 10) {
+      try {
+        const url = `${ETHERSCAN_API}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=${limit}&sort=desc`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === '1' && data.result) {
+          return data.result.map(tx => ({
+            hash: tx.hash,
+            from: tx.from.toLowerCase(),
+            to: (tx.to || '').toLowerCase(),
+            value: (parseInt(tx.value) / 1e18).toFixed(6),
+            gasUsed: tx.gasUsed,
+            timeStamp: new Date(parseInt(tx.timeStamp) * 1000),
+            method: decodeMethod(tx.input),
+            status: tx.isError === '1' ? 'failed' : 'success',
+            direction: tx.from.toLowerCase() === address.toLowerCase() ? 'out' : 'in'
+          }));
+        }
+        return [];
+      } catch (e) {
+        console.error('Etherscan error:', e);
+        return [];
+      }
+    }
 
-    const analysis = {
-      risk_level: 'MEDIUM',
-      summary: 'Wallet shows regular DeFi activity with 1 failed transaction and multiple large transfers. Pattern suggests active trading/bridging behavior.',
-      patterns: ['1 failed delegate transaction', '6 large transfers (>1 ETH)', '2 token approvals detected', 'Cross-chain bridge usage'],
-      recommendations: ['Review unlimited token approvals', 'Set up alerts for transfers >2 ETH', 'Monitor bridge transactions for anomalies']
-    };
+    function decodeMethod(input) {
+      if (!input || input === '0x') return 'transfer';
+      const sig = input.slice(0, 10);
+      const methods = {
+        '0x38ed1739': 'swap', '0x8803dbee': 'swap', '0x7ff36ab5': 'swap',
+        '0xa9059cbb': 'transfer', '0x23b872dd': 'transferFrom',
+        '0x095ea7b3': 'approve', '0x39509351': 'approve',
+        '0x40c10f19': 'mint', '0xa0712d68': 'mint',
+        '0x1249c58b': 'mint', '0x6a627842': 'mint',
+        '0x5c11d795': 'swapExactTokensForTokens',
+        '0x18cbafe5': 'swapExactTokensForETH',
+        '0xfb3bdb41': 'swapETHForExactTokens',
+        '0xd0e30db0': 'deposit', '0x2e1a7d4d': 'withdraw',
+        '0x3ccfd60b': 'withdraw', '0x48c54b9d': 'claim',
+        '0xe9fad8ee': 'exit', '0x8b3e96f2': 'delegate',
+      };
+      return methods[sig] || 'contract';
+    }
+
+    async function fetchEthBalance(address) {
+      try {
+        const url = `${ETHERSCAN_API}?module=account&action=balance&address=${address}&tag=latest`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.status === '1') return (parseInt(data.result) / 1e18).toFixed(4);
+        return '0';
+      } catch { return '0'; }
+    }
+
+    // ── AI Analysis (MiMo-style pattern detection) ──
+    function analyzeTransactions(address, txs) {
+      const totalTxs = txs.length;
+      const failedTxs = txs.filter(t => t.status === 'failed').length;
+      const largeTxs = txs.filter(t => parseFloat(t.value) > 1.0).length;
+      const approvals = txs.filter(t => t.method === 'approve').length;
+      const swaps = txs.filter(t => t.method.includes('swap')).length;
+      const outgoing = txs.filter(t => t.direction === 'out').length;
+      const incoming = txs.filter(t => t.direction === 'in').length;
+
+      let riskScore = 0;
+      const patterns = [];
+      const recommendations = [];
+
+      if (failedTxs > 2) { riskScore += 2; patterns.push(`${failedTxs} failed transactions detected`); recommendations.push('Investigate failed transactions — possible contract issues'); }
+      if (largeTxs > 3) { riskScore += 1; patterns.push(`${largeTxs} large transfers (>1 ETH)`); recommendations.push('Set up alerts for transfers exceeding 1 ETH'); }
+      if (approvals > 0) { riskScore += 1; patterns.push(`${approvals} token approval(s) detected`); recommendations.push('Review and revoke unnecessary token approvals'); }
+      if (swaps > 3) { patterns.push(`Active DEX trading (${swaps} swaps)`); }
+      if (outgoing > incoming * 2) { riskScore += 1; patterns.push('Net outflow — more outgoing than incoming'); }
+
+      const riskLevel = riskScore >= 4 ? 'CRITICAL' : riskScore >= 2 ? 'HIGH' : riskScore >= 1 ? 'MEDIUM' : 'LOW';
+      
+      if (riskLevel === 'LOW') {
+        patterns.push('Normal wallet activity');
+        recommendations.push('Continue monitoring');
+      }
+
+      const totalValue = txs.reduce((sum, t) => sum + parseFloat(t.value), 0).toFixed(2);
+
+      return {
+        risk_level: riskLevel,
+        risk_score: riskScore,
+        summary: `Analyzed ${totalTxs} transactions | ${incoming} in / ${outgoing} out | Total volume: ${totalValue} ETH | ${failedTxs} failures`,
+        patterns,
+        recommendations,
+        stats: { totalTxs, failedTxs, largeTxs, approvals, swaps, incoming, outgoing, totalValue }
+      };
+    }
+
+    // ── Alert Detection ──
+    function detectAlerts(address, txs, label) {
+      const alerts = [];
+      for (const tx of txs.slice(0, 5)) {
+        if (parseFloat(tx.value) > 1.0 && tx.direction === 'out') {
+          alerts.push({ type: 'large_transfer', severity: 'warning', message: `${label}: Sent ${tx.value} ETH via ${tx.method}`, time: tx.timeStamp, address });
+        }
+        if (tx.status === 'failed') {
+          alerts.push({ type: 'failed_tx', severity: 'info', message: `${label}: Failed ${tx.method} transaction`, time: tx.timeStamp, address });
+        }
+        if (tx.method === 'approve') {
+          alerts.push({ type: 'token_approval', severity: 'warning', message: `${label}: Token approval to ${tx.to.slice(0,10)}...`, time: tx.timeStamp, address });
+        }
+      }
+      return alerts;
+    }
 
     // ── Render ──
     function renderWallets() {
-      document.getElementById('wallet-list').innerHTML = wallets.map(w => `
-        <div class="wallet-item">
+      const el = document.getElementById('wallet-list');
+      if (!wallets.length) {
+        el.innerHTML = '<div class="empty"><div class="icon">🦊</div><p>No wallets tracked yet.<br>Add an EVM address to start.</p></div>';
+        return;
+      }
+      el.innerHTML = wallets.map(w => `
+        <div class="wallet-item" id="wallet-${w.id}">
           <div class="wallet-info">
-            <div class="wallet-avatar">🦊</div>
+            <div class="wallet-avatar" style="background:${gradientFor(w.address)}">🦊</div>
             <div>
               <div class="wallet-name">${w.label}</div>
-              <div class="wallet-address">${w.address.slice(0,6)}...${w.address.slice(-4)}</div>
+              <div class="wallet-address" onclick="copyAddress('${w.address}')" title="Click to copy">${w.address.slice(0,6)}...${w.address.slice(-4)} · ${w.balance || '...'} ETH</div>
             </div>
           </div>
           <div class="wallet-actions">
-            <span class="risk risk-${w.riskLevel}">${w.riskLevel}</span>
-            <button class="btn btn-sm btn-outline" onclick="showAnalysis('${w.label}')">Analyze</button>
+            <span class="risk risk-${w.riskLevel || 'UNKNOWN'}">${w.riskLevel || '—'}</span>
+            <button class="btn btn-xs" onclick="analyzeWallet('${w.id}')">🧠 Analyze</button>
+            <button class="btn btn-xs btn-ghost" onclick="loadTxs('${w.id}')">📋 Txs</button>
+            <button class="btn btn-xs btn-danger" onclick="removeWallet('${w.id}')">✕</button>
           </div>
         </div>
       `).join('');
-    }
-
-    function renderTransactions() {
-      document.getElementById('tx-list').innerHTML = transactions.map(tx => `
-        <div class="tx-item">
-          <div>
-            <span class="tx-method">${tx.method}</span>
-            <span class="tx-hash" style="margin-left:8px;">${tx.hash}</span>
-          </div>
-          <div style="text-align:right;">
-            <div class="tx-value">${tx.value} ETH</div>
-            <div class="tx-time">${tx.time}</div>
-          </div>
-        </div>
-      `).join('');
+      document.getElementById('stat-wallets').textContent = wallets.length;
     }
 
     function renderAlerts() {
-      document.getElementById('alert-list').innerHTML = alerts.map(a => `
+      const el = document.getElementById('alert-list');
+      const recent = allAlerts.slice(0, 10);
+      if (!recent.length) {
+        el.innerHTML = '<div class="empty"><div class="icon">🔔</div><p>No alerts yet.</p></div>';
+        document.getElementById('alert-count').textContent = '0 active';
+        return;
+      }
+      document.getElementById('alert-count').textContent = `${allAlerts.length} active`;
+      document.getElementById('stat-alerts').textContent = allAlerts.length;
+      el.innerHTML = recent.map(a => `
         <div class="alert-item">
           <div class="alert-header">
             <div class="alert-dot ${a.severity}"></div>
             <span class="alert-type">${a.type.replace(/_/g, ' ')}</span>
           </div>
           <div class="alert-msg">${a.message}</div>
-          <div class="alert-time">${a.time}</div>
+          <div class="alert-time">${timeAgo(a.time)}</div>
         </div>
       `).join('');
     }
 
-    function renderAnalysis() {
-      document.getElementById('analysis-content').innerHTML = `
-        <div style="margin-bottom:12px;">
-          <div class="analysis-row">
-            <span class="label">Risk Level</span>
+    function renderTransactions(txs, label) {
+      const el = document.getElementById('tx-list');
+      document.getElementById('tx-wallet-label').textContent = label;
+      if (!txs.length) {
+        el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>No transactions found</p></div>';
+        return;
+      }
+      el.innerHTML = txs.map(tx => `
+        <div class="tx-item">
+          <div class="tx-left">
+            <span class="tx-method">${tx.method}</span>
+            <span class="tx-hash">${tx.hash.slice(0,10)}...</span>
+            <span class="tx-status ${tx.status}"></span>
+          </div>
+          <div class="tx-right">
+            <div class="tx-value">${tx.direction === 'in' ? '+' : '-'}${tx.value} ETH</div>
+            <div class="tx-time">${timeAgo(tx.timeStamp)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAnalysis(analysis, label) {
+      analysisCount++;
+      document.getElementById('stat-analyses').textContent = analysisCount;
+      const el = document.getElementById('analysis-content');
+      el.innerHTML = `
+        <div class="analysis-block">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-size:13px;font-weight:600;">${label}</span>
             <span class="risk risk-${analysis.risk_level}">${analysis.risk_level}</span>
           </div>
-          <div class="analysis-row">
-            <span class="label">Alerts</span>
-            <span>${alerts.length} detected</span>
-          </div>
+          <div class="analysis-summary">${analysis.summary}</div>
         </div>
-        <div style="font-size:13px;margin-bottom:12px;">${analysis.summary}</div>
-        <div class="analysis-list">
-          <div style="font-size:11px;color:var(--accent);margin-bottom:6px;">PATTERNS</div>
-          <ul>${analysis.patterns.map(p => `<li>${p}</li>`).join('')}</ul>
+        <div class="analysis-block">
+          <div class="analysis-label">Patterns Detected</div>
+          <ul class="analysis-list">${analysis.patterns.map(p => `<li>${p}</li>`).join('')}</ul>
         </div>
-        <div class="analysis-list" style="margin-top:12px;">
-          <div style="font-size:11px;color:var(--accent);margin-bottom:6px;">RECOMMENDATIONS</div>
-          <ul>${analysis.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+        <div class="analysis-block">
+          <div class="analysis-label">Recommendations</div>
+          <ul class="analysis-list">${analysis.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
         </div>
       `;
     }
 
-    function addWallet() {
-      const addr = document.getElementById('input-address').value.trim();
+    // ── Actions ──
+    async function addWallet() {
+      const address = document.getElementById('input-address').value.trim();
       const label = document.getElementById('input-label').value.trim();
-      if (!addr || !addr.startsWith('0x')) return alert('Enter a valid EVM address');
-      wallets.push({ id: Date.now().toString(), address: addr, label: label || `Wallet ${wallets.length + 1}`, riskLevel: 'UNKNOWN' });
+      if (!address || !address.startsWith('0x') || address.length !== 42) {
+        showToast('Enter a valid EVM address (0x...)', 'error');
+        return;
+      }
+      if (wallets.find(w => w.address.toLowerCase() === address.toLowerCase())) {
+        showToast('Wallet already tracked', 'error');
+        return;
+      }
+
+      const wallet = {
+        id: Date.now().toString(36),
+        address: address,
+        label: label || `Wallet ${wallets.length + 1}`,
+        riskLevel: 'UNKNOWN',
+        balance: '...'
+      };
+      wallets.push(wallet);
       document.getElementById('input-address').value = '';
       document.getElementById('input-label').value = '';
       renderWallets();
-      document.getElementById('stat-wallets').textContent = wallets.length;
+      showToast('Wallet added! Fetching balance...', 'success');
+
+      // Fetch real balance
+      const balance = await fetchEthBalance(address);
+      wallet.balance = balance;
+      renderWallets();
     }
 
-    function showAnalysis(name) {
-      document.getElementById('tx-wallet-label').textContent = name;
-      document.querySelector('.section:last-child').scrollIntoView({ behavior: 'smooth' });
+    function removeWallet(id) {
+      wallets = wallets.filter(w => w.id !== id);
+      allAlerts = allAlerts.filter(a => a.address !== wallets.find(w => w.id === id)?.address);
+      renderWallets();
+      renderAlerts();
+      showToast('Wallet removed', 'success');
     }
 
-    // Init
-    renderWallets();
-    renderTransactions();
-    renderAlerts();
-    renderAnalysis();
+    async function analyzeWallet(id) {
+      const wallet = wallets.find(w => w.id === id);
+      if (!wallet) return;
+
+      const el = document.getElementById('analysis-content');
+      el.innerHTML = '<div class="loading"><div class="spinner"></div> Analyzing with MiMo AI...</div>';
+
+      const txs = await fetchRealTransactions(wallet.address, 20);
+      if (!txs.length) {
+        el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>No transactions found. Check the address or try again.</p></div>';
+        return;
+      }
+
+      const analysis = analyzeTransactions(wallet.address, txs);
+      const alerts = detectAlerts(wallet.address, txs, wallet.label);
+      
+      wallet.riskLevel = analysis.risk_level;
+      allAlerts = [...alerts, ...allAlerts].slice(0, 50);
+      
+      renderWallets();
+      renderAlerts();
+      renderAnalysis(analysis, wallet.label);
+      showToast(`Analysis complete: ${analysis.risk_level} risk`, 'success');
+    }
+
+    async function loadTxs(id) {
+      const wallet = wallets.find(w => w.id === id);
+      if (!wallet) return;
+
+      const el = document.getElementById('tx-list');
+      el.innerHTML = '<div class="loading"><div class="spinner"></div> Fetching from Etherscan...</div>';
+
+      const txs = await fetchRealTransactions(wallet.address, 10);
+      renderTransactions(txs, wallet.label);
+    }
+
+    function refreshAll() {
+      wallets.forEach(async (w) => {
+        w.balance = await fetchEthBalance(w.address);
+        renderWallets();
+      });
+      showToast('Refreshing balances...', 'success');
+    }
+
+    function copyAddress(addr) {
+      navigator.clipboard.writeText(addr);
+      showToast('Address copied!', 'success');
+    }
+
+    // ── Helpers ──
+    function gradientFor(addr) {
+      const hash = addr.slice(2, 8);
+      const h = parseInt(hash, 16) % 360;
+      return `linear-gradient(135deg, hsl(${h},70%,50%), hsl(${(h+60)%360},70%,40%))`;
+    }
+
+    function timeAgo(date) {
+      const d = date instanceof Date ? date : new Date(date);
+      const secs = Math.floor((Date.now() - d.getTime()) / 1000);
+      if (secs < 60) return 'just now';
+      if (secs < 3600) return `${Math.floor(secs/60)}m ago`;
+      if (secs < 86400) return `${Math.floor(secs/3600)}h ago`;
+      return `${Math.floor(secs/86400)}d ago`;
+    }
+
+    function showToast(msg, type = 'success') {
+      const el = document.getElementById('toast');
+      el.className = `toast ${type}`;
+      el.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span> ${msg}`;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    // ── Init with demo wallets ──
+    async function init() {
+      const demoAddresses = [
+        { address: '0x6c7230ed729C3f255BD77DEE5CC3618ff40719d4', label: 'Ilyas Wallet' },
+        { address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', label: 'Vitalik' },
+      ];
+
+      for (const d of demoAddresses) {
+        const wallet = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
+          address: d.address,
+          label: d.label,
+          riskLevel: 'UNKNOWN',
+          balance: '...'
+        };
+        wallets.push(wallet);
+      }
+      renderWallets();
+
+      // Fetch real balances
+      for (const w of wallets) {
+        w.balance = await fetchEthBalance(w.address);
+        renderWallets();
+      }
+    }
+
+    init();
   </script>
 </body>
 </html>
